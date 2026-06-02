@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sorana Glass</title>
+    <meta name="description" content="Sorana Glass is one of Ethiopia's leading glass processing factories — tempered, laminated, architectural and automotive glass with over 20 years of expertise." />
+    <meta name="author" content="Sorana Glass" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
+  <body>
+    <script>
+      window.addEventListener('error', function(e) {
+        var err = document.createElement('div');
+        err.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:red;color:white;z-index:999999;padding:20px;font-family:monospace;white-space:pre-wrap;';
+        err.textContent = 'Global Error: ' + e.message + '\n' + e.filename + ':' + e.lineno + '\n\n' + (e.error ? e.error.stack : '');
+        document.body.appendChild(err);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        var err = document.createElement('div');
+        err.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:darkred;color:white;z-index:999999;padding:20px;font-family:monospace;white-space:pre-wrap;';
+        err.textContent = 'Unhandled Promise: ' + e.reason;
+        document.body.appendChild(err);
+      });
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

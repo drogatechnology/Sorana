@@ -1,0 +1,1097 @@
+@import "tailwindcss";
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Brand: deep emerald + warm amber, inspired by Sorana's existing palette */
+  --background: oklch(0.99 0.005 95);
+  --foreground: oklch(0.18 0.02 160);
+
+  --surface: oklch(0.96 0.01 150);
+  --surface-foreground: oklch(0.2 0.02 160);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 160);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 160);
+
+  --primary: oklch(0.32 0.07 155);
+  /* deep forest green */
+  --primary-foreground: oklch(0.98 0.01 95);
+
+  --secondary: oklch(0.94 0.02 150);
+  --secondary-foreground: oklch(0.25 0.04 160);
+
+  --muted: oklch(0.95 0.01 150);
+  --muted-foreground: oklch(0.45 0.02 160);
+
+  --accent: oklch(0.72 0.16 55);
+  /* warm amber */
+  --accent-foreground: oklch(0.18 0.03 60);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.9 0.01 150);
+  --input: oklch(0.9 0.01 150);
+  --ring: oklch(0.32 0.07 155);
+
+  --gradient-hero: linear-gradient(135deg, oklch(0.28 0.07 155) 0%, oklch(0.22 0.05 165) 60%, oklch(0.72 0.16 55) 100%);
+  --gradient-accent: linear-gradient(90deg, oklch(0.72 0.16 55), oklch(0.78 0.14 75));
+  --shadow-elegant: 0 30px 80px -30px color-mix(in oklab, oklch(0.32 0.07 155) 45%, transparent);
+  --shadow-card: 0 10px 30px -15px color-mix(in oklab, oklch(0.32 0.07 155) 25%, transparent);
+}
+
+.dark {
+  --background: oklch(0.14 0.02 160);
+  --foreground: oklch(0.98 0.01 95);
+  --surface: oklch(0.18 0.02 160);
+  --surface-foreground: oklch(0.98 0.01 95);
+  --card: oklch(0.2 0.02 160);
+  --card-foreground: oklch(0.98 0.01 95);
+  --popover: oklch(0.2 0.02 160);
+  --popover-foreground: oklch(0.98 0.01 95);
+  --primary: oklch(0.72 0.16 55);
+  --primary-foreground: oklch(0.18 0.03 60);
+  --secondary: oklch(0.25 0.03 160);
+  --secondary-foreground: oklch(0.98 0.01 95);
+  --muted: oklch(0.25 0.03 160);
+  --muted-foreground: oklch(0.7 0.02 150);
+  --accent: oklch(0.72 0.16 55);
+  --accent-foreground: oklch(0.18 0.03 60);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.16 55);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Loading Screen Animation Styles */
+.loading-screen {
+  contain: layout style;
+}
+
+.loading-panel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #fff9f2;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.loading-panel--left {
+  left: 0;
+  animation: loading-split-left 1.2s cubic-bezier(0.65, 0, 0.35, 1) 2.2s forwards;
+}
+
+.loading-panel--right {
+  right: 0;
+  animation: loading-split-right 1.2s cubic-bezier(0.65, 0, 0.35, 1) 2.2s forwards;
+}
+
+.loading-logo-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 90px;
+  height: 90px;
+  border-radius: 9999px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate3d(-50%, -50%, 0);
+  box-sizing: border-box;
+}
+
+.loading-logo-inner {
+  width: 86px;
+  height: 86px;
+  border-radius: 9999px;
+  aspect-ratio: 1 / 1;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.loading-logo-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  user-select: none;
+}
+
+.loading-circle-draw {
+  stroke-dasharray: 280;
+  stroke-dashoffset: 280;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  will-change: stroke-dashoffset;
+  animation: circle-draw 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+/* Edge Lines */
+.loading-edge-line-left {
+  position: absolute;
+  left: 3rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #0A7C3F;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: line-detract-left 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+.loading-edge-line-right {
+  position: absolute;
+  right: 3rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #E87732;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  animation: line-detract-right 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+/* Center Lines (aligned to panel inner edges) */
+.loading-center-line-top {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 2px;
+  height: calc(50vh - 45px);
+  background-color: #0A7C3F;
+  transform-origin: top center;
+  will-change: transform;
+  transform: scaleY(0) translateZ(0);
+  animation: line-extend-top 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+.loading-center-line-bottom {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  height: calc(50vh - 45px);
+  background-color: #E87732;
+  transform-origin: bottom center;
+  will-change: transform;
+  transform: scaleY(0) translateZ(0);
+  animation: line-extend-bottom 2.2s cubic-bezier(0.45, 0, 0.55, 1) forwards;
+}
+
+/* Animations */
+@keyframes loading-split-left {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes loading-split-right {
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes circle-draw {
+  0% {
+    stroke-dashoffset: 280;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes line-detract-left {
+  to {
+    transform: translate3d(0, -105vh, 0);
+  }
+}
+
+@keyframes line-detract-right {
+  to {
+    transform: translate3d(0, 105vh, 0);
+  }
+}
+
+@keyframes line-extend-top {
+  to {
+    transform: scaleY(1) translateZ(0);
+  }
+}
+
+@keyframes line-extend-bottom {
+  to {
+    transform: scaleY(1) translateZ(0);
+  }
+}
+
+
+/* ============================================================
+   Hero Section — Diagonal Image Strips
+   ============================================================ */
+
+/**
+ * Outer wrapper: rotated so the strips look diagonal.
+ * scale(1.6) ensures the rotated strips cover the entire viewport
+ * without any gaps at the corners.
+ */
+.hero-strips-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Inclined the angle more (-25deg instead of -14deg) and adjusted scale */
+  transform: rotate(-25deg) scale(1.8);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  /* Keep this element on its own GPU composite layer at all times so
+     reversing the scroll never triggers a layer-reconstruction flash */
+  will-change: transform, opacity;
+  contain: layout style paint;
+}
+
+/**
+ * Individual strip row — scrolls horizontally in an infinite loop.
+ * Content is duplicated so the loop is seamless.
+ * will-change: transform → browser allocates a dedicated GPU layer.
+ */
+.hero-strip {
+  display: flex;
+  flex-shrink: 0;
+  gap: 16px;
+  width: max-content;
+  will-change: transform;
+}
+
+/* Scroll LEFT  (pairs drift right → left) */
+.hero-strip-ltr {
+  animation: hero-ltr linear infinite;
+}
+
+/* Scroll RIGHT (pairs drift left → right) */
+.hero-strip-rtl {
+  animation: hero-rtl linear infinite;
+}
+
+/**
+ * A "pair" = 2 images from the same folder, always placed side-by-side.
+ * Fixed dimensions keep the pixel offset in @keyframes exact.
+ * Image size: 230 × 310 px  |  within-pair gap: 10 px
+ */
+.hero-pair {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.hero-pair-img {
+  width: 230px;
+  height: 310px;
+  object-fit: cover;
+  filter: brightness(0.65);
+  /* NO CSS transition here — a transition on filter/transform fires when
+     is-active is removed during scroll-up, creating a visible brightness
+     flash that fights GSAP. Brightness changes are instant; GSAP controls
+     the fade-out of the entire wrapper so smoothness is preserved. */
+  will-change: transform;
+}
+
+.hero-pair:hover .hero-pair-img,
+.hero-pair.is-active .hero-pair-img {
+  filter: brightness(1);
+}
+
+/*
+ * Cycle length calculation (6 pairs per strip, duplicated for seamless loop):
+ *   pair width        = 230 + 10 + 230 = 470 px
+ *   inter-pair gap    = 16 px
+ *   6 pairs content   = 6 × 470 + 5 × 16 = 2820 + 80 = 2900 px
+ *   + bridging gap    = 16 px
+ *   → CYCLE           = 2916 px
+ */
+@keyframes hero-ltr {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-2916px, 0, 0);
+  }
+}
+
+@keyframes hero-rtl {
+  0% {
+    transform: translate3d(-2916px, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ============================================================
+   Hero brand-colour overlay  (#0A7C3F → #E87732)
+   Fades to opacity:0 via GSAP ScrollTrigger on scroll.
+   ============================================================ */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: linear-gradient(45deg,
+      rgba(232, 119, 50, 0.95) 0%,
+      /* Stronger color at bottom left */
+      rgba(232, 119, 50, 0.4) 20%,
+      rgba(10, 124, 63, 0.1) 50%,
+      rgba(10, 124, 63, 0.4) 80%,
+      rgba(10, 124, 63, 0.95) 100%
+      /* Stronger color at top right */
+    );
+  pointer-events: none;
+  will-change: opacity;
+}
+
+/* ============================================================
+   Hero scroll-hint bouncing dot
+   ============================================================ */
+.hero-scroll-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: hero-dot-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes hero-dot-bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateY(6px);
+    opacity: 0.9;
+  }
+}
+
+/* ============================================================
+   Hero — Product info card (swipes open from a thin line)
+   ============================================================ */
+
+/**
+ * Positioned at the centre of the expanded overlay.
+ * GSAP controls scaleY (0 → 1) to create the "thin line → open box" reveal.
+ */
+.hero-info-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(340px, 62vw, 820px);
+  z-index: 15;
+  overflow: hidden;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(0);
+}
+
+/* 4-corner layout container */
+.hero-info-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 140px;
+}
+
+.hero-info-card-layer {
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(232, 119, 50, 0.35);
+  border-bottom: 1px solid rgba(232, 119, 50, 0.35);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  will-change: clip-path;
+  /* Whole card is now a link */
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+}
+
+.hero-info-card-layer:hover {
+  border-top-color: rgba(232, 119, 50, 0.65);
+  border-bottom-color: rgba(232, 119, 50, 0.65);
+}
+
+/* ── Top Left: Title ── */
+.hero-card-tl {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  letter-spacing: -0.01em;
+}
+
+/* ── Bottom Left: Category ── */
+.hero-card-bl {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 2rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-bl, #E87732);
+}
+
+/* ── Top Right: Arrow Link ── */
+.hero-card-tr {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  color: var(--arrow-color, rgba(255, 255, 255, 0.7));
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-card-tr svg {
+  transform: rotate(-45deg);
+  transition: transform 0.2s;
+}
+
+.hero-card-tr:hover {
+  color: var(--text-primary, #fff);
+}
+
+.hero-card-tr:hover svg {
+  transform: rotate(-45deg) scale(1.2);
+}
+
+/* ── Bottom Right: Products label ── */
+.hero-card-br {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 2rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-br, #ffffff);
+}
+
+/* ── Center: Stamped Logo ── */
+.hero-card-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-card-logo-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  /* Stamped / embossed impression */
+  filter: brightness(0) invert(1);
+  opacity: 0.15;
+}
+
+/* ── About Panel (Hero Step 4) ────────────────────────────────────────── */
+.about-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(235, 245, 238, 0.88) 100%);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(10, 124, 63, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  will-change: clip-path;
+}
+
+.about-panel-content {
+  max-width: 480px;
+  will-change: transform, opacity;
+}
+
+.about-panel-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
+.about-panel-title {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-foreground);
+  margin-bottom: 1.5rem;
+  text-wrap: balance;
+}
+
+.about-panel-body {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-muted-foreground);
+}
+
+.about-panel-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.2s ease;
+}
+
+.about-panel-link:hover {
+  border-color: var(--color-primary);
+}
+
+.about-video-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── WebGL fluid displacement canvas ───────────────────────────────────── */
+.about-gl-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 1;
+  will-change: clip-path;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Services Section  (McAlpine-style overlay + split header)
+══════════════════════════════════════════════════════════════════════════ */
+.svc-section {
+  position: relative;
+  /* Add negative margin to overlap the pinned hero early */
+  margin-top: -100vh;
+  z-index: 20;
+  padding: 0;
+  overflow: visible;
+  /* Transparent so the box looks like it's floating up */
+  background: transparent;
+}
+
+/* The expanding box that starts narrow and expands to full screen */
+.svc-box {
+  position: relative;
+  margin: 0 auto;
+  max-width: 100%;
+  overflow: hidden;
+  /* Glassy translucent background with noticeable green and orange hints */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(22, 235, 122, 0.65) 30%,
+    rgba(255, 255, 255, 0.75) 70%,
+    rgba(250, 131, 58, 0.65) 100%
+  );
+  -webkit-backdrop-filter: blur(32px);
+  backdrop-filter: blur(32px);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.10);
+  padding-bottom: 8rem;
+  /* Ensure a minimum height so it fully covers the viewport */
+  min-height: 100vh;
+}
+
+/* ── Split Section Header ──────────────────────────────────────────────── */
+.svc-header-mcalpine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rem 4rem;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.svc-title-left,
+.svc-title-right {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 400;
+  margin: 0;
+  line-height: 1;
+}
+
+.svc-header-img-wrapper {
+  width: clamp(250px, 40vw, 550px);
+  aspect-ratio: 21 / 9;
+  overflow: hidden;
+  margin: 0 2rem;
+}
+
+.svc-header-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* filter: grayscale(100%) contrast(1.1); */
+}
+
+/* ── Vertical centered service list ────────────────────────────────────── */
+.svc-list {
+  list-style: none;
+  margin: 0;
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.svc-item {
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  max-width: 1200px;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease, opacity 0.3s ease;
+  /* Prevent double borders */
+  margin-top: -1px;
+}
+
+.svc-item-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1.5rem 0;
+  text-decoration: none;
+}
+
+.svc-item:hover,
+.svc-item.is-active {
+  border-color: var(--border);
+  z-index: 2; /* Bring active border to top */
+}
+
+.svc-item.is-dimmed {
+  opacity: 0.25;
+}
+
+.svc-item-text-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.svc-item-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 5rem);
+  font-weight: 400;
+  color: var(--foreground);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.svc-item-index {
+  position: absolute;
+  top: -0.4rem;
+  right: -1.4rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 1vw, 1rem);
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1);
+  transition: color 0.3s ease;
+}
+
+.svc-item:hover .svc-item-index,
+.svc-item.is-active .svc-item-index {
+  color: white;
+}
+
+/* ── Inline hover images (left side) ───────────────────────────────────── */
+.svc-item-images {
+  position: absolute;
+  left: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.svc-item-img {
+  /* Height perfectly matches the text clamp approximation */
+  height: clamp(32px, 4vw, 80px);
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  opacity: 0;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.footer-sorana {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 3rem 12vh 3rem;
+}
+
+.footer-sorana-letter {
+  font-size: clamp(4rem, 15vw, 14rem);
+}
+
+.footer-bottom-container {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  gap: 1rem;
+}
+
+.footer-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 1);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 1);
+}
+
+/* ============================================================
+   Mobile: stack hero product images top / bottom
+   (desktop keeps the left / right split — no change there)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Left wipe → becomes the TOP panel, full width, grows downward */
+  .hero-slide-wipe-left {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    bottom: auto !important;
+    top: 0 !important;
+    max-height: 50vh;
+  }
+  .hero-slide-wipe-left img {
+    top: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 50vh !important;
+    object-position: center top;
+  }
+
+  /* Right wipe → becomes the BOTTOM panel, full width, grows upward */
+  .hero-slide-wipe-right {
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    top: auto !important;
+    bottom: 0 !important;
+    max-height: 50vh;
+  }
+  .hero-slide-wipe-right img {
+    bottom: 0 !important;
+    top: auto !important;
+    right: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 50vh !important;
+    object-position: center bottom;
+  }
+
+  /* About section mobile: Video on TOP, Text on BOTTOM */
+  .about-panel {
+    width: 100% !important;
+    height: 50% !important;
+    left: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    padding: 2rem !important;
+  }
+
+  .about-panel-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-video-wrapper {
+    width: 100% !important;
+    height: 50% !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: auto !important;
+    top: 0 !important;
+  }
+
+  .about-panel-title {
+    font-size: 1.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .about-panel-body {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .about-panel-link {
+    margin-top: 1.5rem !important;
+    font-size: 0.95rem !important;
+  }
+
+  .about-panel-label {
+    margin-bottom: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* ── Services Section Mobile Overrides ── */
+  .svc-header-mcalpine {
+    padding: 3rem 1.5rem !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    text-align: center !important;
+  }
+  
+  .svc-title-left,
+  .svc-title-right {
+    font-size: 2.25rem !important;
+  }
+  
+  .svc-header-img-wrapper {
+    width: 85% !important;
+    margin: 0 !important;
+  }
+  
+  .svc-item-name {
+    font-size: 1.4rem !important;
+  }
+  
+  .svc-item-images {
+    left: 1rem !important;
+  }
+  
+  .svc-item-img {
+    height: 36px !important;
+  }
+
+  /* Hide 2nd and 3rd images on mobile */
+  .svc-item-img:nth-child(n+2) {
+    display: none !important;
+  }
+
+  /* Force 1st image to always be visible (overriding GSAP hover logic) */
+  .svc-item-img:first-child {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* ── Footer Mobile Overrides ── */
+  .footer-scrim {
+    background: rgba(0, 0, 0, 0.45) !important; /* Slightly lighten bg image */
+  }
+
+  .footer-sorana {
+    align-items: flex-start !important;
+    padding: 15vh 1.5rem 0 1.5rem !important;
+  }
+
+  .footer-sorana-letter {
+    font-size: 15vw !important;
+  }
+
+  .footer-bottom {
+    top: 0 !important; 
+    pointer-events: none; 
+  }
+
+  .footer-bottom-container {
+    padding: 0 !important;
+    height: 100%;
+    position: relative;
+    pointer-events: auto; 
+  }
+
+  /* Socials directly below SORANA, spread out */
+  .footer-socials {
+    position: absolute;
+    top: 28vh; 
+    left: 0;
+    right: 0;
+    justify-content: space-between; /* Spread from start to end */
+    padding: 0 1.5rem; /* Match SORANA padding */
+    width: 100%;
+  }
+
+  .footer-bottom-left,
+  .footer-bottom-right {
+    display: contents !important;
+  }
+
+  /* Bottom Left/Right Placement: Equidistant from the center arrow (48px wide) */
+  .footer-copyright {
+    position: absolute;
+    bottom: 2rem;
+    right: calc(50% + 60px); /* 40px gap from the true center */
+    left: auto;
+    width: auto;
+    padding: 0;
+    text-align: right;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .footer-privacy {
+    position: absolute;
+    bottom: 2rem;
+    left: calc(50% + 60px); /* 40px gap from the true center */
+    right: auto;
+    width: auto;
+    padding: 0;
+    text-align: left;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .footer-terms {
+    display: none !important;
+  }
+}

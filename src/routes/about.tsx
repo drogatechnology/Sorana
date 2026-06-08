@@ -7,7 +7,7 @@ import { PageHeroSection } from "@/components/PageHeroSection";
 import { StorySection } from "@/components/StorySection";
 import { CoreValuesSection, LeafyBranchSVG } from "@/components/CoreValuesSection";
 import { LeadershipSection } from "@/components/LeadershipSection";
-import { MilestonesSection } from "@/components/Milestonessection";
+import { MilestonesSection } from "@/components/MilestonesSection";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);

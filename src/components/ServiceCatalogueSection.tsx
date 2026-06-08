@@ -121,10 +121,10 @@ export function ServiceCatalogueSection() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap');
         .caps-section {
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Inter', sans-serif;
         }
         .caps-headline {
-          font-family: 'DM Serif Display', serif;
+          font-family: 'Inter', serif;
         }
       `}</style>
 

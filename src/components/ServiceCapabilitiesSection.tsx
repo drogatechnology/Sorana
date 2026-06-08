@@ -142,10 +142,9 @@ export function ServiceCapabilitiesSection() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display&display=swap');
         .caps * { box-sizing: border-box; }
         .caps-label {
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-size: 10px;
           font-weight: 500;
           letter-spacing: 0.16em;
@@ -155,15 +154,15 @@ export function ServiceCapabilitiesSection() {
           margin: 0;
         }
         .caps-headline {
-          font-family: 'DM Serif Display', serif;
+          font-family: 'Inter', sans-serif;
           font-size: clamp(1.5rem, 2.4vw, 2.5rem);
-          font-weight: 400;
+          font-weight: 500;
           line-height: 1.08;
           color: rgba(255,255,255,0.92);
           margin: 0;
         }
         .caps-desc {
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-size: clamp(0.75rem, 0.9vw, 0.875rem);
           font-weight: 300;
           line-height: 1.65;

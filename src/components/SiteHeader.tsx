@@ -39,18 +39,28 @@ export function SiteHeader() {
     return () => document.body.classList.remove("nav-open");
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen || activeMode !== "top") return;
+useEffect(() => {
+  if (!isOpen || activeMode !== "top") return;
 
-    const handleOutside = (e: PointerEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
+  const handleOutside = (e: PointerEvent) => {
+    if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      setIsOpen(false);
+    }
+  };
 
-    document.addEventListener("pointerdown", handleOutside);
-    return () => document.removeEventListener("pointerdown", handleOutside);
-  }, [isOpen, activeMode]);
+  // 👇 Add this
+  const handleScroll = () => {
+    setIsOpen(false);
+  };
+
+  document.addEventListener("pointerdown", handleOutside);
+  window.addEventListener("scroll", handleScroll, { passive: true });
+
+  return () => {
+    document.removeEventListener("pointerdown", handleOutside);
+    window.removeEventListener("scroll", handleScroll); // 👇 And this
+  };
+}, [isOpen, activeMode]);
 
   useEffect(() => {
     const handleBottomEnter = () => {

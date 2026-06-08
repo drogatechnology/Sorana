@@ -7,6 +7,7 @@ import { PageHeroSection } from "@/components/PageHeroSection";
 import { StorySection } from "@/components/StorySection";
 import { CoreValuesSection, LeafyBranchSVG } from "@/components/CoreValuesSection";
 import { LeadershipSection } from "@/components/LeadershipSection";
+import { MilestonesSection } from "@/components/Milestonessection";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -81,7 +82,8 @@ function About() {
         titleAs="p"
       />
 
-      <div className="bg-white h-16 md:h-24" aria-hidden="true" />
+      {/* ─── Milestones ─── */}
+      <MilestonesSection />
 
       <StorySection />
 

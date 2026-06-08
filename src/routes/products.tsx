@@ -34,137 +34,137 @@ interface Card {
 const CARDS: Card[] = [
   {
     name: "Tempered Glass",
-    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Heat-treated safety glass, up to 5× stronger than annealed glass — fragments safely on impact.",
   },
   {
     name: "Tempered Glass",
-    img: "https://images.pexels.com/photos/11618522/pexels-photo-11618522.jpeg",
+    img: "https://images.pexels.com/photos/11618522/pexels-photo-11618522.jpeg?auto=compress&w=400",
     desc: "Heat-treated safety glass, up to 5× stronger than annealed glass — fragments safely on impact.",
   },
   {
     name: "Tempered Glass",
-    img: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Heat-treated safety glass, up to 5× stronger than annealed glass — fragments safely on impact.",
   },
   {
     name: "Laminated Glass",
-    img: "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Multi-layered glass bonded with PVB interlayers for security, sound and UV control.",
   },
   {
     name: "Laminated Glass",
-    img: "https://images.pexels.com/photos/1190902/pexels-photo-1190902.jpeg",
+    img: "https://images.pexels.com/photos/1190902/pexels-photo-1190902.jpeg?auto=compress&w=400",
     desc: "Multi-layered glass bonded with PVB interlayers for security, sound and UV control.",
   },
   {
     name: "Laminated Glass",
-    img: "https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Multi-layered glass bonded with PVB interlayers for security, sound and UV control.",
   },
   {
     name: "Frameless Partitions",
-    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Frosted and sandblasted partitions for offices, retail and residential spaces.",
   },
   {
     name: "Frameless Partitions",
-    img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Frosted and sandblasted partitions for offices, retail and residential spaces.",
   },
   {
     name: "Frameless Partitions",
-    img: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1568992687947-868a62a9f521?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Frosted and sandblasted partitions for offices, retail and residential spaces.",
   },
   {
     name: "Shower Enclosures",
-    img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Custom frameless shower boxes designed and installed for luxury bathrooms.",
   },
   {
     name: "Shower Enclosures",
-    img: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Custom frameless shower boxes designed and installed for luxury bathrooms.",
   },
   {
     name: "Shower Enclosures",
-    img: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Custom frameless shower boxes designed and installed for luxury bathrooms.",
   },
   {
     name: "Skylight & Double Glazing",
-    img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Insulated and skylight glass solutions for energy-efficient architecture.",
   },
   {
     name: "Skylight & Double Glazing",
-    img: "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Insulated and skylight glass solutions for energy-efficient architecture.",
   },
   {
     name: "Skylight & Double Glazing",
-    img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Insulated and skylight glass solutions for energy-efficient architecture.",
   },
   {
     name: "Auto Glass",
-    img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Windshield supply, replacement and processing for cars, buses and assembly lines.",
   },
   {
     name: "Auto Glass",
-    img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Windshield supply, replacement and processing for cars, buses and assembly lines.",
   },
   {
     name: "Auto Glass",
-    img: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Windshield supply, replacement and processing for cars, buses and assembly lines.",
   },
   {
     name: "Printed Glass",
-    img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Digitally printed glass for branded and decorative interior applications.",
   },
   {
     name: "Printed Glass",
-    img: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Digitally printed glass for branded and decorative interior applications.",
   },
   {
     name: "Printed Glass",
-    img: "https://images.pexels.com/photos/12472486/pexels-photo-12472486.jpeg",
+    img: "https://images.pexels.com/photos/12472486/pexels-photo-12472486.jpeg?auto=compress&w=400",
     desc: "Digitally printed glass for branded and decorative interior applications.",
   },
   {
     name: "Sandblasted Glass",
-    img: "https://images.unsplash.com/photo-1572635148818-ef6fd45eb394?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1572635148818-ef6fd45eb394?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Custom etched and sandblasted patterns for privacy and decoration.",
   },
   {
     name: "Sandblasted Glass",
-    img: "https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1600861194942-f883de0dfe96?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Custom etched and sandblasted patterns for privacy and decoration.",
   },
   {
     name: "Sandblasted Glass",
-    img: "https://images.pexels.com/photos/16775661/pexels-photo-16775661.jpeg",
+    img: "https://images.pexels.com/photos/16775661/pexels-photo-16775661.jpeg?auto=compress&w=400",
     desc: "Custom etched and sandblasted patterns for privacy and decoration.",
   },
   {
     name: "Bullet-Resistant Glass",
-    img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Multi-layered laminated glass engineered for security applications.",
   },
   {
     name: "Bullet-Resistant Glass",
-    img: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=600&h=820&q=80",
+    img: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=400&h=547&q=70",
     desc: "Multi-layered laminated glass engineered for security applications.",
   },
   {
     name: "Bullet-Resistant Glass",
-    img: "https://images.pexels.com/photos/33530414/pexels-photo-33530414.jpeg",
+    img: "https://images.pexels.com/photos/33530414/pexels-photo-33530414.jpeg?auto=compress&w=400",
     desc: "Multi-layered laminated glass engineered for security applications.",
   },
 ];
@@ -196,12 +196,24 @@ function Products() {
           7,
         );
 
-  useEffect(() => {
-    const id = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 100);
-    return () => clearTimeout(id);
-  }, [filter]);
+// AFTER
+useEffect(() => {
+  // 1. Instantly scroll to the top of the products section
+  //    (instant, not smooth — we don't want GSAP to see an in-between state)
+  const gallery = document.getElementById("products-gallery");
+  if (gallery) {
+    const top = gallery.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top, behavior: "instant" });
+  }
+
+  // 2. Wait one frame for React to paint the new grid, then refresh GSAP
+  //    so it measures the correct (new) page height before any trigger fires
+  const id = requestAnimationFrame(() => {
+    ScrollTrigger.refresh(true); // true = force-recalculate all triggers
+  });
+
+  return () => cancelAnimationFrame(id);
+}, [filter]);
 
   return (
     <div className="relative bg-background">

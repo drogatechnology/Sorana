@@ -1,10 +1,9 @@
 import { useRef, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Target, Eye, Sparkles } from "lucide-react";
-import factoryImg from "@/assets/factory.jpg";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { PageHeroSection } from "@/components/PageHeroSection";
 import { StorySection } from "@/components/StorySection";
 import { CoreValuesSection, LeafyBranchSVG } from "@/components/CoreValuesSection";
 import { LeadershipSection } from "@/components/LeadershipSection";
@@ -34,12 +33,39 @@ function About() {
     
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
+        id: "about-pin",
         trigger: wrapperRef.current,
-        start: "bottom bottom", // When the bottom of the wrapper hits the bottom of the viewport
-        end: () => "+=" + window.innerHeight, // Pin it for the duration of 1 viewport height (for the footer reveal)
+        start: "bottom bottom",
+        end: () => "+=" + window.innerHeight,
         pin: contentRef.current,
-        pinSpacing: true, // Automatically adds the exact padding needed
+        pinSpacing: true,
+        onUpdate: (self) => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: self.progress } }),
+          );
+        },
+        onEnter: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 0, visible: true } }),
+          );
+        },
+        onEnterBack: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 0, visible: true, enterBack: true } }),
+          );
+        },
+        onLeaveBack: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 0, visible: false } }),
+          );
+        },
+        onLeave: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 1, visible: true, leave: true } }),
+          );
+        },
       });
+      ScrollTrigger.refresh();
     }, wrapperRef);
 
     return () => ctx.revert();
@@ -47,38 +73,19 @@ function About() {
 
   return (
     <>
-      <section className="relative overflow-hidden py-16 flex flex-col items-center justify-center text-center">
-        {/* Greenish/orangeish glassy background */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[#0A7C3F]/50 rounded-full blur-[80px] -translate-y-1/3 -translate-x-2/3" />
-          <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[#E87732]/40 rounded-full blur-[80px] translate-y-1/3 translate-x-2/3" />
-          <div className="absolute inset-0 bg-background/30 backdrop-blur-[30px]" />
-        </div>
+      <PageHeroSection
+        imageSrc="https://images.pexels.com/photos/13946142/pexels-photo-13946142.jpeg"
+        imageAlt="Sorana Glass Interior"
+        title="From auto glass roots to Ethiopia's most advanced processor."
+        description="Sorana Glass began with deep technical expertise in automotive glass and has grown into a fully integrated glass solutions provider — combining over 20 years of industry experience with modern production technology."
+        titleAs="p"
+      />
 
-        <div className="relative z-10 h-full w-full max-w-6xl px-6 flex flex-col items-center">
-          <p className="mt-10 mb-8 max-w-3xl capitalize font-display text-3xl font-semibold leading-tight">
-            From auto glass roots to Ethiopia's most advanced processor.
-          </p>
-
-          <div className="relative p-2 md:p-3 bg-[#0A7C3F]/30 backdrop-blur-md border border-white/20 shadow-2xl mb-10 w-full max-w-3xl mx-auto">
-            <div className="p-1 rounded-sm">
-              <img 
-                src="https://images.unsplash.com/photo-1600607686527-6fb886090705?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" 
-                alt="Sorana Glass Interior" 
-                className="w-full h-[180px] sm:h-[220px] md:h-[200px] object-cover opacity-95" 
-              />
-            </div>
-          </div>
-
-          <p className="mt-3 max-w-5xl capitalize font-display text-lg font-light text-balance">
-            Sorana Glass began with deep technical expertise in automotive glass and has grown into a fully integrated glass solutions provider — combining over 20 years of industry experience with modern production technology.
-          </p>
-        </div>
-      </section>
+      <div className="bg-white h-16 md:h-24" aria-hidden="true" />
 
       <StorySection />
 
-      <div ref={wrapperRef} className="relative">
+      <div ref={wrapperRef} id="about-footer-trigger" className="relative">
         <div ref={contentRef} className="relative overflow-hidden bg-surface min-h-screen">
           {/* Background Layer: Frosted Glass + Leafy SVGs */}
           <div className="absolute inset-0 z-0 bg-[#EFEFEA]">

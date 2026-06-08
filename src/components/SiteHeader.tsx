@@ -40,6 +40,19 @@ export function SiteHeader() {
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen || activeMode !== "top") return;
+
+    const handleOutside = (e: PointerEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handleOutside);
+    return () => document.removeEventListener("pointerdown", handleOutside);
+  }, [isOpen, activeMode]);
+
+  useEffect(() => {
     const handleBottomEnter = () => {
       isBottomRef.current = true;
       setActiveMode('bottom');
@@ -77,9 +90,12 @@ export function SiteHeader() {
     if (!capsuleRef.current || !menuRef.current || !containerRef.current) return;
     
     // Initial states for the dropdown menu
+    // NOTE: clip-path on a parent ALWAYS breaks backdrop-filter on children (browser rule).
+    // Use overflow:hidden + height animation instead — same visual, blur preserved.
     gsap.set(menuRef.current, { 
-      clipPath: activeMode === 'bottom' ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
-      y: activeMode === 'bottom' ? 20 : -20, // slightly behind the header
+      height: 0,
+      overflow: "hidden",
+      y: -20,
       display: "none"
     });
 
@@ -100,7 +116,7 @@ export function SiteHeader() {
         .to(".open-content", { opacity: 1, autoAlpha: 1, duration: 0.2 }, "-=0.2")
         .set(menuRef.current, { display: "block" }, "-=0.4")
         .to(menuRef.current, { 
-          clipPath: "inset(0% 0% 0% 0%)", 
+          height: "auto",
           y: 0, 
           duration: 0.5 
         }, "-=0.3");
@@ -145,10 +161,26 @@ export function SiteHeader() {
       {/* DROPDOWN MENU (Behind capsule) */}
       <div 
         ref={menuRef}
-        className={`absolute left-0 w-full -z-10 ${activeMode === 'bottom' ? 'bottom-0 pb-[64px]' : 'top-0 pt-[64px]'}`}
+        className={`absolute left-0 w-full -z-10 ${activeMode === 'bottom' ? 'bottom-full mb-4' : 'top-0 pt-[64px]'}`}
       >
-        <div className="w-full bg-gradient-to-br from-[#0A7C3F]/95 to-[#E87732]/95 backdrop-blur-2xl rounded-none">
-           <div className="p-8 flex flex-col gap-5 text-white justify-between">
+        <div 
+          className="w-full rounded-none relative"
+          style={{
+            background: "linear-gradient(135deg, rgba(10, 124, 63, 0.45) 0%, rgba(232, 119, 50, 0.45) 100%)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
+            borderTop: "1px solid rgba(255, 255, 255, 0.6)",
+            borderLeft: "1px solid rgba(255, 255, 255, 0.4)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRight: "1px solid rgba(255, 255, 255, 0.1)"
+          }}
+        >
+          {/* Top-left corner glow */}
+          <div className="absolute pointer-events-none" style={{ top: 0, left: 0, width: '60%', height: '50%', background: 'radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.22) 0%, transparent 70%)', zIndex: 1 }} />
+          {/* Bottom-right corner glow */}
+          <div className="absolute pointer-events-none" style={{ bottom: 0, right: 0, width: '50%', height: '40%', background: 'radial-gradient(ellipse at 100% 100%, rgba(255,255,255,0.12) 0%, transparent 70%)', zIndex: 1 }} />
+           <div className="p-8 flex flex-col gap-5 text-white justify-between relative z-10">
               <div>
                 <div className="text-[10px] font-bold tracking-[0.2em] mb-4 uppercase opacity-60">Menu</div>
                 <nav className="flex flex-col gap-3 text-[28px] leading-tight font-medium tracking-tight">
@@ -187,9 +219,23 @@ export function SiteHeader() {
       <div 
         ref={capsuleRef}
         onClick={handleCapsuleClick}
-        className="h-12 bg-gradient-to-tr from-[#0A7C3F]/70 to-[#E87732]/70 backdrop-blur-2xl relative mx-auto overflow-hidden shadow-2xl cursor-pointer rounded-none z-20"
-        style={{ width: "100%" }}
+        className="h-12 relative mx-auto cursor-pointer rounded-none z-20"
+        style={{ 
+          width: "100%",
+          background: "linear-gradient(135deg, rgba(10, 124, 63, 0.45) 0%, rgba(232, 119, 50, 0.45) 100%)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.3)",
+          borderTop: "1px solid rgba(255, 255, 255, 0.6)",
+          borderLeft: "1px solid rgba(255, 255, 255, 0.4)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRight: "1px solid rgba(255, 255, 255, 0.1)"
+        }}
       >
+        {/* Top-left corner glow */}
+        <div className="absolute pointer-events-none" style={{ top: 0, left: 0, width: '50%', height: '100%', background: 'radial-gradient(ellipse at 0% 50%, rgba(255,255,255,0.28) 0%, transparent 65%)', zIndex: 1 }} />
+        {/* Bottom-right corner glow */}
+        <div className="absolute pointer-events-none" style={{ bottom: 0, right: 0, width: '40%', height: '100%', background: 'radial-gradient(ellipse at 100% 50%, rgba(255,255,255,0.13) 0%, transparent 65%)', zIndex: 1 }} />
         {/* Closed State Content */}
         <div className="closed-content absolute inset-0 flex items-center justify-between px-4 w-full max-w-[320px]">
           <div className="flex items-center shrink-0">

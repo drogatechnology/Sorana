@@ -105,15 +105,23 @@ type PairEntry = { imgs: [string, string]; name: string; category: string };
 
 /** Each pair = two images from the same folder + metadata */
 const ALL_PAIRS: PairEntry[] = [
-  { imgs: [tempered1,    tempered2],    name: "Tempered Glass",      category: "Architectural" },
-  { imgs: [frosted1,     frosted2],     name: "Frosted Glass",        category: "Decorative"    },
-  { imgs: [frameless1,   frameless2],   name: "Frameless Partitions", category: "Interior"      },
-  { imgs: [shower1,      shower2],      name: "Shower Enclosures",    category: "Bathroom"      },
-  { imgs: [laminated1,   laminated2],   name: "Laminated Glass",      category: "Security"      },
-  { imgs: [autoglass1,   autoglass2],   name: "Auto Glass",           category: "Automotive"    },
-  { imgs: [bulletproof1, bulletproof2], name: "Bulletproof Glass",    category: "Security"      },
-  { imgs: [printed1,     printed2],     name: "Printed Glass",        category: "Decorative"    },
-  { imgs: [sandblasted1, sandblasted2], name: "Sandblasted Glass",    category: "Frosted"       },
+  { imgs: ["https://images.pexels.com/photos/20677918/pexels-photo-20677918.jpeg",    "https://images.pexels.com/photos/68724/pexels-photo-68724.jpeg"],    name: "Tempered Glass",      category: "Architectural" },
+
+  { imgs: ["https://images.unsplash.com/photo-1737316992965-c9f22680c40f?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",     "https://images.unsplash.com/photo-1764670587705-0508e724b929?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],     name: "Frosted Glass",        category: "Decorative"    },
+
+  { imgs: ["https://images.unsplash.com/photo-1765766600513-5a9ae1440de9?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",   "https://images.pexels.com/photos/6436749/pexels-photo-6436749.jpeg"],   name: "Frameless Partitions", category: "Interior"      },
+
+  { imgs: ["https://images.pexels.com/photos/7546284/pexels-photo-7546284.jpeg",      "https://images.pexels.com/photos/8082556/pexels-photo-8082556.jpeg"],      name: "Shower Enclosures",    category: "Bathroom"      },
+
+  { imgs: ["https://plus.unsplash.com/premium_photo-1673711761323-b97492ac57bf?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",   "https://images.unsplash.com/photo-1540981992196-5827f2f4566e?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"],   name: "Laminated Glass",      category: "Security"      },
+
+  { imgs: ["https://images.pexels.com/photos/4839258/pexels-photo-4839258.jpeg",   "https://images.pexels.com/photos/11950154/pexels-photo-11950154.jpeg"],   name: "Auto Glass",           category: "Automotive"    },
+
+  { imgs: ["https://images.pexels.com/photos/33530412/pexels-photo-33530412.jpeg", "https://images.pexels.com/photos/33530415/pexels-photo-33530415.jpeg"], name: "Bulletproof Glass",    category: "Security"      },
+
+  { imgs: ["https://images.unsplash.com/photo-1614959541579-c01f9b605f79?q=80&w=736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",     "https://images.pexels.com/photos/18836811/pexels-photo-18836811.jpeg"],     name: "Printed Glass",        category: "Decorative"    },
+
+  { imgs: ["https://images.unsplash.com/photo-1570347809976-0a4abd0aa811?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", "https://images.pexels.com/photos/14303756/pexels-photo-14303756.jpeg"], name: "Sandblasted Glass",    category: "Frosted"       },
 ];
 
 // Strip layout: three rows. Middle strip (index 1) is the one that un-rotates on scroll.
@@ -131,12 +139,54 @@ function buildStripPairs(start: number, count = 6): PairEntry[] {
   return Array.from({ length: count }, (_, i) => ALL_PAIRS[(start + i) % ALL_PAIRS.length]);
 }
 
+/** Products that look alike in the hero wipe even when categories differ. */
+function pairSimilarityGroup(pair: PairEntry): string {
+  if (pair.name === "Frosted Glass" || pair.name === "Sandblasted Glass") {
+    return "frosted";
+  }
+  return pair.category;
+}
+
+function areSimilarPairs(a: PairEntry, b: PairEntry): boolean {
+  return pairSimilarityGroup(a) === pairSimilarityGroup(b);
+}
+
+/** Pick `count` random pairs that are not similar to each other or to `alreadySelected`. */
+function pickDissimilarPairs(
+  pool: PairEntry[],
+  count: number,
+  alreadySelected: PairEntry[],
+): PairEntry[] {
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const picked: PairEntry[] = [];
+
+  for (const candidate of shuffled) {
+    if (picked.length >= count) break;
+    const group = [...alreadySelected, ...picked];
+    if (group.some((p) => areSimilarPairs(p, candidate))) continue;
+    picked.push(candidate);
+  }
+
+  // Rare edge case: not enough dissimilar products — fill without repeating names.
+  if (picked.length < count) {
+    for (const candidate of shuffled) {
+      if (picked.length >= count) break;
+      if (picked.includes(candidate)) continue;
+      if ([...alreadySelected, ...picked].some((p) => p.name === candidate.name)) continue;
+      picked.push(candidate);
+    }
+  }
+
+  return picked;
+}
+
 // Number of additional product showcases after the initial reveal
 const EXTRA_STEPS = 2;
 
-// Products end at 500vh (2 + 2*1.5). About panel runs 500–700vh. Buffer 80vh → 780vh total.
-// Increased to 880 to allow the about panel to breathe before the services section slides up.
-const TOTAL_VH = 850;
+// About panel runs from ABOUT_START_VH → ABOUT_START_VH + 2 viewports.
+// Keep only a short buffer after it so services follows without extra dead scroll.
+const ABOUT_START_VH = 2.2 + EXTRA_STEPS * 1.5;
+const TOTAL_VH = (ABOUT_START_VH + 2) * 100 + 120;
 
 export function HeroSection() {
   // ── DOM refs ──────────────────────────────────────────────────────────────
@@ -194,9 +244,18 @@ export function HeroSection() {
       const els = contentRef.current?.querySelectorAll<HTMLElement>(".hero-animate");
       if (els?.length) {
         gsap.set(els, { opacity: 0, y: 36 });
-        timerRef.current = setTimeout(() => {
-          gsap.to(els, { opacity: 1, y: 0, stagger: 0.14, duration: 1, ease: "power3.out" });
-        }, LOADING_DURATION + 100);
+        
+        const hasLoaded = sessionStorage.getItem('loadingScreenDone');
+        if (hasLoaded) {
+          // If loading screen is already done, just animate in after a tiny delay
+          gsap.to(els, { opacity: 1, y: 0, stagger: 0.14, duration: 1, ease: "power3.out", delay: 0.1 });
+        } else {
+          // Otherwise, wait for the global event from LoadingScreen
+          const startHeroAnimation = () => {
+            gsap.to(els, { opacity: 1, y: 0, stagger: 0.14, duration: 1, ease: "power3.out" });
+          };
+          window.addEventListener('loadingScreenExiting', startHeroAnimation, { once: true });
+        }
       }
 
       // Set initial state for the info card
@@ -264,12 +323,14 @@ export function HeroSection() {
               activePairRef.current = targetPairEl;
               targetPairEl.classList.add("is-active");
 
-              initialPairIdxRef.current = bestIdx % middlePairs.length;
+              const middleIdx = bestIdx % middlePairs.length;
+              const entry = middlePairs[middleIdx];
+              const initialAllPairsIdx = ALL_PAIRS.indexOf(entry);
+              initialPairIdxRef.current = initialAllPairsIdx;
 
-              // Pick random extras — different from initial
-              const available = ALL_PAIRS.filter((_, i) => i !== initialPairIdxRef.current);
-              const shuffled = [...available].sort(() => Math.random() - 0.5);
-              extraPairsRef.current = shuffled.slice(0, EXTRA_STEPS);
+              // Pick random extras — different from initial and not visually similar
+              const available = ALL_PAIRS.filter((_, i) => i !== initialAllPairsIdx);
+              extraPairsRef.current = pickDissimilarPairs(available, EXTRA_STEPS, [entry]);
 
               // Calculate translation needed to center this exact pair
               const r = targetPairEl.getBoundingClientRect();
@@ -287,7 +348,6 @@ export function HeroSection() {
               }
 
               // Populate Card Text and Wipe Images
-              const entry = middlePairs[bestIdx % middlePairs.length];
               const textGroups = document.querySelectorAll<HTMLElement>(".hero-card-text-group");
               
               if (textGroups[0]) {
@@ -330,9 +390,10 @@ export function HeroSection() {
           }
 
           // Apply Phase 1 transforms — runs every frame unconditionally ─────
+          const p1Eased = gsap.parseEase("power2.inOut")(p1);
           gsap.set(stripsWrapperRef.current, {
-            rotate: gsap.utils.interpolate(-25, 0, p1),
-            scale:  gsap.utils.interpolate(1.8, 1, p1),
+            rotate: gsap.utils.interpolate(-25, 0, p1Eased),
+            scale:  gsap.utils.interpolate(1.8, 1, p1Eased),
           });
 
           // ─ Phase 2 (p: 0.45 → 1.0): expand clone pair + reveal card ──────
@@ -372,27 +433,30 @@ export function HeroSection() {
               img2TargetCy = windowH * 3 / 4;
             } else {
               // Desktop: animate to side-by-side
-              img1TargetW = bodyW / 2;
-              img1TargetH = windowH;
-              img1TargetCx = bodyW / 4;
+              const BORDER = 10.5;
+              img1TargetW = bodyW / 2 - BORDER;
+              img1TargetH = windowH - BORDER * 2;
+              img1TargetCx = bodyW / 4 - BORDER / 2;
               img1TargetCy = windowH / 2;
 
-              img2TargetW = bodyW / 2;
-              img2TargetH = windowH;
-              img2TargetCx = bodyW * 3 / 4;
+              img2TargetW = bodyW / 2 - BORDER;
+              img2TargetH = windowH - BORDER * 2;
+              img2TargetCx = bodyW * 3 / 4 + BORDER / 2;
               img2TargetCy = windowH / 2;
             }
 
             // Smoothly interpolate center coordinates and dimensions
-            const img1W  = gsap.utils.interpolate(startW, img1TargetW, p2);
-            const img1H  = gsap.utils.interpolate(startH, img1TargetH, p2);
-            const img1Cx = gsap.utils.interpolate(img1StartCx, img1TargetCx, p2);
-            const img1Cy = gsap.utils.interpolate(img1StartCy, img1TargetCy, p2);
+            const p2Eased = gsap.parseEase("power2.inOut")(p2);
+            
+            const img1W  = gsap.utils.interpolate(startW, img1TargetW, p2Eased);
+            const img1H  = gsap.utils.interpolate(startH, img1TargetH, p2Eased);
+            const img1Cx = gsap.utils.interpolate(img1StartCx, img1TargetCx, p2Eased);
+            const img1Cy = gsap.utils.interpolate(img1StartCy, img1TargetCy, p2Eased);
 
-            const img2W  = gsap.utils.interpolate(startW, img2TargetW, p2);
-            const img2H  = gsap.utils.interpolate(startH, img2TargetH, p2);
-            const img2Cx = gsap.utils.interpolate(img2StartCx, img2TargetCx, p2);
-            const img2Cy = gsap.utils.interpolate(img2StartCy, img2TargetCy, p2);
+            const img2W  = gsap.utils.interpolate(startW, img2TargetW, p2Eased);
+            const img2H  = gsap.utils.interpolate(startH, img2TargetH, p2Eased);
+            const img2Cx = gsap.utils.interpolate(img2StartCx, img2TargetCx, p2Eased);
+            const img2Cy = gsap.utils.interpolate(img2StartCy, img2TargetCy, p2Eased);
 
             const imgs = clonePairRef.current.querySelectorAll("img");
             if (imgs.length === 2) {
@@ -436,12 +500,14 @@ export function HeroSection() {
             ? Math.min(1, Math.max(0, p2 / 0.75))
             : p2card;
 
+          const p2cardEased = gsap.parseEase("power2.inOut")(p2cardFinal);
+
           gsap.set(infoCardRef.current, {
-            height:    `${Math.max(1, p2cardFinal * 140)}px`,
-            autoAlpha: Math.min(p2cardFinal * 2, 1),
+            height:    `${Math.max(1, p2cardEased * 140)}px`,
+            autoAlpha: Math.min(p2cardEased * 2, 1),
           });
           gsap.set(infoCardInnerRef.current, {
-            autoAlpha: Math.max(0, (p2cardFinal - 0.45) / 0.55),
+            autoAlpha: Math.max(0, (p2cardEased - 0.45) / 0.55),
           });
         },
       });
@@ -449,7 +515,7 @@ export function HeroSection() {
       ScrollTrigger.create({
         trigger: scrollContainerRef.current,
         start:   "top top",
-        end:     `+=${window.innerHeight * 2}`,  // first 200vh
+        end:     `+=${window.innerHeight * 1.5}`,  // Finish expanding earlier (1.5vh instead of 2vh)
         scrub:   1.5,
         animation: proxyTween,
       });
@@ -460,8 +526,8 @@ export function HeroSection() {
       
       ScrollTrigger.create({
         trigger: scrollContainerRef.current,
-        start:   `top+=${window.innerHeight * 2} top`,
-        end:     `top+=${window.innerHeight * (2 + EXTRA_STEPS * 1.5)} top`, // extended end duration
+        start:   `top+=${window.innerHeight * 2.2} top`, // Start later to hold the product fullscreen
+        end:     `top+=${window.innerHeight * (2.2 + EXTRA_STEPS * 1.5)} top`, // extended end duration
         scrub:   1.2,
         snap: {
           snapTo: (value) => {
@@ -541,8 +607,6 @@ export function HeroSection() {
       });
 
       // ── About Panel Reveal (Step 4) ──────────────────────────────────────
-      // Products ST ends at (2 + EXTRA_STEPS * 1.5) = 5 viewport heights
-      const ABOUT_START_VH = 2 + EXTRA_STEPS * 1.25;
       ScrollTrigger.create({
         trigger: scrollContainerRef.current,
         start:   `top+=${window.innerHeight * ABOUT_START_VH} top`,
@@ -793,7 +857,7 @@ export function HeroSection() {
       <section
         ref={heroRef}
         id="hero"
-        className="relative h-screen overflow-hidden bg-foreground"
+        className="relative h-screen overflow-hidden bg-[#032111]"
         style={{ position: "sticky", top: 0 }}
       >
         {/* ── Diagonal image strips ──────────────────────────────────────────── */}
@@ -832,13 +896,13 @@ export function HeroSection() {
         {/* ── Additional Slideshow Wipes (Mersi-Style) ──────────────────────── */}
         <div className="hero-slides-wrapper" style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }}>
           {[...Array(EXTRA_STEPS)].map((_, i) => (
-             <div key={i} className="hero-slide-layer" style={{ position: 'absolute', inset: 0 }}>
+             <div key={i} className="hero-slide-layer" style={{ position: 'absolute', inset: 0, border: '15px solid #032111', overflow: 'hidden' }}>
                {/* Left panel wipes UP from BOTTOM */}
-               <div className="hero-slide-wipe-left" style={{ position: 'absolute', left: 0, bottom: 0, width: '50%', height: 0, overflow: 'hidden', willChange: 'height' }}>
+               <div className="hero-slide-wipe-left" style={{ position: 'absolute', left: -10, bottom: 0, width: '50%', height: 0, overflow: 'hidden', willChange: 'height' }}>
                  <img className="hero-slide-img-left" alt="" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100vh', objectFit: 'cover' }} />
                </div>
                {/* Right panel wipes DOWN from TOP */}
-               <div className="hero-slide-wipe-right" style={{ position: 'absolute', right: 0, top: 0, width: '50%', height: 0, overflow: 'hidden', willChange: 'height' }}>
+               <div className="hero-slide-wipe-right" style={{ position: 'absolute', right: -10, top: 0, width: '50%', height: 0, overflow: 'hidden', willChange: 'height' }}>
                  <img className="hero-slide-img-right" alt="" style={{ position: 'absolute', top: 0, right: 0, width: '100%', height: '100vh', objectFit: 'cover' }} />
                </div>
              </div>
@@ -986,15 +1050,15 @@ export function HeroSection() {
           <div className="hero-animate mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 rounded-md bg-[#0A7C3F] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#0b9048] hover:scale-[1.03] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 bg-[#0A7C3F] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-[#0b9048] hover:scale-[1.03] active:scale-[0.98]"
             >
-              Request a quote <ArrowRight className="h-4 w-4" />
+              Contact Us <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 rounded-md border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-[1.03] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:scale-[1.03] active:scale-[0.98]"
             >
-              Explore products
+              Explore Products
             </Link>
           </div>
         </div>

@@ -5,6 +5,8 @@ import { HeroSection } from "@/components/HeroSection";
 import { ServicesSection } from "@/components/ServicesSection";
 import { IndustriesSection } from "@/components/Industriessection";
 
+
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   return (
     <>
+      
       {/* ── Full-screen hero with diagonal image strips ─────────────────────── */}
       <HeroSection />
 

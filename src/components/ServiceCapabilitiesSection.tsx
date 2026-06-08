@@ -16,25 +16,25 @@ const CAPABILITIES = [
     title: 'Processing',
     desc: '4 tempering furnaces, lamination lines, CNC cutting and drilling, sandblasting and digital printing.',
     image: 'https://images.unsplash.com/photo-1506902039157-1a7e7374b077?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    video: processingVideo,
+    video: "https://www.pexels.com/download/video/7519297/",
   },
   {
     title: 'Custom Fabrication',
     desc: 'From a single bespoke piece to large project runs — we engineer to spec with structured QC at each step.',
     image: 'https://images.pexels.com/photos/7220832/pexels-photo-7220832.jpeg',
-    video: fabricationVideo,
+    video: "https://www.pexels.com/download/video/7219277/",
   },
   {
     title: 'Installation',
     desc: 'Skilled installation teams trained on safe handling, packaging and site logistics for fragile glass.',
     image: 'https://images.pexels.com/photos/5768188/pexels-photo-5768188.jpeg',
-    video: installationVideo,
+    video: "https://www.pexels.com/download/video/34918466/",
   },
   {
     title: 'Supply & Distribution',
     desc: 'Direct imports of Grade One float glass and full hardware accessories supply for trade clients.',
     image: 'https://images.pexels.com/photos/36122954/pexels-photo-36122954.jpeg',
-    video: supplyVideo,
+    video: "https://www.pexels.com/download/video/6169107/",
   },
 ];
 
@@ -268,9 +268,9 @@ export function ServiceCapabilitiesSection() {
                       position: 'absolute',
                       top: '50%',
                       left: '50%',
-                      transform: 'translate(-50%, -50%) scale(3)',
+                      transform: 'translate(-50%, -50%) scale(1)',
                       width: '100%',
-                      height: '150%',
+                      height: '100%',
                       objectFit: 'cover',
                       display: 'block',
                     }}

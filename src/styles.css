@@ -168,12 +168,18 @@
 
 .loading-panel--left {
   left: 0;
-  animation: loading-split-left 1.2s cubic-bezier(0.65, 0, 0.35, 1) 2.2s forwards;
+}
+
+.loading-screen.is-exiting .loading-panel--left {
+  animation: loading-split-left 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .loading-panel--right {
   right: 0;
-  animation: loading-split-right 1.2s cubic-bezier(0.65, 0, 0.35, 1) 2.2s forwards;
+}
+
+.loading-screen.is-exiting .loading-panel--right {
+  animation: loading-split-right 1.2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .loading-logo-circle {
@@ -356,7 +362,7 @@
 .hero-strip {
   display: flex;
   flex-shrink: 0;
-  gap: 16px;
+  gap: 50px;
   width: max-content;
   will-change: transform;
 }
@@ -488,7 +494,7 @@
   width: clamp(340px, 62vw, 820px);
   z-index: 15;
   overflow: hidden;
-  pointer-events: auto;
+  pointer-events: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -688,23 +694,19 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   Services Section  (McAlpine-style overlay + split header)
+   Services Section  (split header + carousel)
 ══════════════════════════════════════════════════════════════════════════ */
 .svc-section {
   position: relative;
-  /* Add negative margin to overlap the pinned hero early */
-  margin-top: -100vh;
   z-index: 20;
   padding: 0;
   overflow: visible;
-  /* Transparent so the box looks like it's floating up */
-  background: transparent;
 }
 
-/* The expanding box that starts narrow and expands to full screen */
 .svc-box {
   position: relative;
   margin: 0 auto;
+  width: 100%;
   max-width: 100%;
   overflow: hidden;
   /* Glassy translucent background with noticeable green and orange hints */
@@ -718,10 +720,7 @@
   -webkit-backdrop-filter: blur(32px);
   backdrop-filter: blur(32px);
   border-top: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 -20px 60px rgba(0,0,0,0.10);
-  padding-bottom: 8rem;
-  /* Ensure a minimum height so it fully covers the viewport */
-  min-height: 100vh;
+  padding-bottom: 3rem;
 }
 
 /* ── Split Section Header ──────────────────────────────────────────────── */
@@ -756,6 +755,30 @@
   height: 100%;
   object-fit: cover;
   /* filter: grayscale(100%) contrast(1.1); */
+}
+
+.svc-carousel-block {
+  padding-top: 3rem;
+}
+
+.svc-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem 1.5rem;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.svc-embla {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.svc-progress {
+  padding: 16px 3rem 0;
+  max-width: 1800px;
+  margin: 0 auto;
 }
 
 /* ── Vertical centered service list ────────────────────────────────────── */
@@ -984,6 +1007,10 @@
   }
 
   /* ── Services Section Mobile Overrides ── */
+  .svc-carousel-block {
+    padding-top: 2rem;
+  }
+
   .svc-header-mcalpine {
     padding: 3rem 1.5rem !important;
     flex-direction: column !important;
@@ -1047,7 +1074,13 @@
     padding: 0 !important;
     height: 100%;
     position: relative;
-    pointer-events: auto; 
+    pointer-events: none; /* was: auto — was blocking the entire viewport */
+  }
+
+  /* Re-enable only on actual interactive children */
+  .footer-bottom-container a,
+  .footer-bottom-container button {
+    pointer-events: auto;
   }
 
   /* Socials directly below SORANA, spread out */
@@ -1094,4 +1127,8 @@
   .footer-terms {
     display: none !important;
   }
+}
+
+.glass-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }

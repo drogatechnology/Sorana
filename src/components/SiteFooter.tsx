@@ -40,40 +40,12 @@ export function SiteFooter() {
     setVisible(false);
 
     let st: ScrollTrigger | null = null;
+    let pinnedTl: gsap.core.Timeline | null = null;
+    let bottomActivated = false;
     let rafId: number;
 
-    const init = () => {
-      // If we're not on the home page, industries-section might not exist, but let's look for a generic footer trigger if needed.
-      // For now, the original code looked for industries-section. 
-      // To avoid infinite loops on other pages, we should only wait if we are on the home page, or look for the last section.
-      const triggerElement = document.getElementById("industries-section") || document.querySelector("main")?.lastElementChild;
-      
-      if (!triggerElement) { 
-        rafId = requestAnimationFrame(init); 
-        return; 
-      }
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: triggerElement,
-          start: "bottom 180%",
-          end:   "bottom 105%",
-          scrub: 1.0,
-          onEnter:     () => {
-            setVisible(true);
-          },
-          onEnterBack: () => {
-            setVisible(true);
-            window.dispatchEvent(new Event("footer-bottom-leave"));
-          },
-          onLeaveBack: () => {
-            setVisible(false);
-          },
-          onLeave: () => {
-            window.dispatchEvent(new Event("footer-bottom-enter"));
-          },
-        },
-      });
+    const buildTimeline = () => {
+      const tl = gsap.timeline({ paused: true });
 
       // Phase 1 (0→0.5): slide the footer image in from the top
       tl.to(slide,     { yPercent: 0, ease: "none" },          0);
@@ -84,10 +56,7 @@ export function SiteFooter() {
       const vpH   = window.innerHeight;
       const capH  = 48;
       const padB  = 20; // padding from bottom
-      // site-header top is 24px (top-6). Target is near bottom.
       const targetY = vpH - capH - padB - 24;
-
-      // Calculate proportional duration so it moves at exactly the same pixel speed as the slide
       const durationN = 0.5 * (targetY / vpH);
       const startT = 0.5 - durationN;
 
@@ -95,14 +64,83 @@ export function SiteFooter() {
         tl.to(siteHeader, { y: targetY, ease: "none", duration: durationN }, startT);
       }
 
-      st = tl.scrollTrigger as ScrollTrigger;
+      return tl;
+    };
+
+    const PINNED_FOOTER_ROUTES = ["/about", "/projects"];
+
+    const handlePinnedFooter = (event: Event) => {
+      if (!pinnedTl) pinnedTl = buildTimeline();
+
+      const { progress, visible: show, enterBack } =
+        (event as CustomEvent<{ progress: number; visible?: boolean; enterBack?: boolean; leave?: boolean }>).detail;
+
+      const clampedProgress = Math.min(Math.max(progress, 0), 1);
+      pinnedTl.progress(clampedProgress);
+      setVisible(show ?? clampedProgress > 0);
+
+      if (enterBack) {
+        bottomActivated = false;
+        window.dispatchEvent(new Event("footer-bottom-leave"));
+        return;
+      }
+
+      // onLeave often never fires when the page ends exactly at the pin zone,
+      // so activate the bottom navbar once the footer animation completes.
+      if (clampedProgress >= 0.99) {
+        if (!bottomActivated) {
+          bottomActivated = true;
+          window.dispatchEvent(new Event("footer-bottom-enter"));
+        }
+      } else if (bottomActivated && clampedProgress < 0.85) {
+        bottomActivated = false;
+        window.dispatchEvent(new Event("footer-bottom-leave"));
+      }
+    };
+
+    const init = () => {
+      if (PINNED_FOOTER_ROUTES.includes(pathname)) {
+        window.addEventListener("pinned-footer-progress", handlePinnedFooter);
+        return;
+      }
+
+      const sections = document.querySelectorAll("main section");
+      const triggerElement =
+        document.getElementById("industries-section") ||
+        document.getElementById("products-gallery") ||
+        (sections.length ? sections[sections.length - 1] : null);
+
+      if (!triggerElement) {
+        rafId = requestAnimationFrame(init);
+        return;
+      }
+
+      const tl = buildTimeline();
+      tl.eventCallback("onUpdate", () => setVisible(tl.progress() > 0));
+
+      st = ScrollTrigger.create({
+        trigger: triggerElement,
+        start: "bottom 180%",
+        end: "bottom 105%",
+        scrub: 1.0,
+        animation: tl,
+        onEnter: () => setVisible(true),
+        onEnterBack: () => {
+          setVisible(true);
+          window.dispatchEvent(new Event("footer-bottom-leave"));
+        },
+        onLeaveBack: () => setVisible(false),
+        onLeave: () => window.dispatchEvent(new Event("footer-bottom-enter")),
+      });
     };
 
     rafId = requestAnimationFrame(init);
-    
-    return () => { 
+
+    return () => {
       cancelAnimationFrame(rafId);
-      st?.kill(); 
+      st?.kill();
+      window.removeEventListener("pinned-footer-progress", handlePinnedFooter);
+      pinnedTl = null;
     };
   }, [pathname]);
 

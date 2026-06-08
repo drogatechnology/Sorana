@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { PageHeroSection } from "@/components/PageHeroSection";
 import { ProjectsIndustriesSection } from "@/components/ProjectsIndustriesSection";
 
 if (typeof window !== "undefined") {
@@ -114,47 +115,63 @@ function Projects() {
     if (!wrapperRef.current || !contentRef.current) return;
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
+        id: "projects-pin",
         trigger: wrapperRef.current,
         start: "bottom bottom",
         end: () => "+=" + window.innerHeight,
         pin: contentRef.current,
         pinSpacing: true,
+        onUpdate: (self) => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: self.progress } }),
+          );
+        },
+        onEnter: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 0, visible: true } }),
+          );
+        },
+        onEnterBack: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 0, visible: true, enterBack: true } }),
+          );
+        },
+        onLeaveBack: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 0, visible: false } }),
+          );
+        },
+        onLeave: () => {
+          window.dispatchEvent(
+            new CustomEvent("pinned-footer-progress", { detail: { progress: 1, visible: true, leave: true } }),
+          );
+        },
       });
+      ScrollTrigger.refresh();
     }, wrapperRef);
-    return () => ctx.revert();
+
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
+    window.addEventListener("resize", refresh);
+
+    return () => {
+      ctx.revert();
+      window.removeEventListener("load", refresh);
+      window.removeEventListener("resize", refresh);
+    };
   }, []);
 
   return (
-    <div ref={wrapperRef} className="relative">
+    <div ref={wrapperRef} id="projects-footer-trigger" className="relative">
       <div ref={contentRef} className="relative bg-background">
-        <section className="relative overflow-hidden py-16 flex flex-col items-center justify-center text-center">
-          {/* Greenish/orangeish glassy background */}
-          <div className="absolute inset-0 z-0">
-            <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[#0A7C3F]/50 rounded-full blur-[80px] -translate-y-1/3 -translate-x-2/3" />
-            <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[#E87732]/40 rounded-full blur-[80px] translate-y-1/3 translate-x-2/3" />
-            <div className="absolute inset-0 bg-background/30 backdrop-blur-[30px]" />
-          </div>
-
-          <div className="relative z-10 h-full w-full max-w-6xl px-6 flex flex-col items-center">
-            <h1 className="mt-10 mb-8 max-w-3xl capitalize font-display text-3xl font-semibold leading-tight">
-              Trusted across Ethiopia's most demanding sectors.
-            </h1>
-
-            <div className="relative p-2 md:p-3 bg-[#0A7C3F]/30 backdrop-blur-md border border-white/20 shadow-2xl mb-10 w-full max-w-5xl mx-auto">
-              <div className="p-1 rounded-sm">
-                <img 
-                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" 
-                  alt="Glass Projects" 
-                  className="w-full aspect-[16/9] md:aspect-[42/9] object-cover opacity-95" 
-                />
-              </div>
-            </div>
-
-            <p className="mt-3 max-w-5xl capitalize font-display text-lg font-light text-balance">
-              Sorana works alongside contractors, developers and manufacturers — delivering consistent quality on both large-scale and urgent projects.
-            </p>
-          </div>
-        </section>
+        <PageHeroSection
+          imageSrc="https://images.pexels.com/photos/239919/pexels-photo-239919.jpeg"
+          imageAlt="Glass Projects"
+          title="Trusted across Ethiopia's most demanding sectors."
+          description="Sorana works alongside contractors, developers and manufacturers — delivering consistent quality on both large-scale and urgent projects."
+          imageClassName="w-full aspect-[16/9] md:aspect-[42/9] object-cover"
+          imageWrapperClassName="w-full max-w-5xl mx-auto"
+        />
 
         <ProjectsIndustriesSection />
 

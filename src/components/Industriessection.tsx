@@ -63,20 +63,6 @@ export function IndustriesSection() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      gsap.fromTo(stickyRef.current,
-        { y: 200 },
-        {
-          y: 0,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 90%',
-            end: 'top 20%',
-            scrub: 1.2,
-          },
-        }
-      );
-
       const totalSteps = INDUSTRIES.length - 1;
 
       function getClip(i: number, sp: number) {

@@ -95,22 +95,24 @@ function GalleryCell({
   neighborStyle: React.CSSProperties;
   hiResRequested: boolean;
   hiResLoaded: boolean;
-  onEnter: (i: number) => void;
+  onEnter: (i: number, el: HTMLDivElement) => void;
   onLeave: () => void;
   onHiResLoaded: (i: number) => void;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
   const thumb = thumbUrl(item.src);
   const full = fullUrl(item.src);
 
   return (
     <div
+      ref={ref}
       style={
         isHovered
           ? { transform: "scale(2.8)", zIndex: 100, transition: `transform ${EASE}` }
           : { ...neighborStyle, zIndex: 1 }
       }
       className="group relative overflow-hidden bg-surface shadow-card rounded-none aspect-square col-span-1 row-span-1 place-self-center w-48 md:w-full max-w-[250px] sm:max-w-[250px] md:max-w-[280px]"
-      onMouseEnter={() => onEnter(index)}
+      onMouseEnter={() => ref.current && onEnter(index, ref.current)}
       onMouseLeave={onLeave}
     >
       <img
@@ -153,6 +155,9 @@ export function InteractiveGallery() {
   const isHoveredRef = useRef(false);
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
 
+  // Target position to smoothly lerp toward when centering a hovered cell
+  const centerTarget = useRef<{ x: number; y: number } | null>(null);
+
   // Touch drag: track last touch point and rolling velocity for momentum
   const touchRef = useRef<{
     lastX: number;
@@ -166,7 +171,7 @@ export function InteractiveGallery() {
   const [hiResRequested, setHiResRequested] = useState<Set<number>>(new Set());
   const [hiResLoaded, setHiResLoaded] = useState<Set<number>>(new Set());
 
-  const handleEnter = useCallback((i: number) => {
+  const handleEnter = useCallback((i: number, cellEl: HTMLDivElement) => {
     isHoveredRef.current = true;
     setHoveredIdx(i);
     setHiResRequested(prev => {
@@ -175,10 +180,40 @@ export function InteractiveGallery() {
       next.add(i);
       return next;
     });
+
+    // Compute the position that would center this cell in the viewport.
+    // cellEl.getBoundingClientRect() gives us where the cell currently is on screen.
+    // We want to shift pos so that the cell lands at the viewport center.
+    if (containerRef.current) {
+      const cellRect = cellEl.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+
+      // Cell center relative to the viewport
+      const cellCenterX = cellRect.left + cellRect.width / 2;
+      const cellCenterY = cellRect.top + cellRect.height / 2;
+
+      // Viewport center
+      const vpCx = containerRect.left + containerRect.width / 2;
+      const vpCy = containerRect.top + containerRect.height / 2;
+
+      // How far we need to shift the grid
+      const dx = vpCx - cellCenterX;
+      const dy = vpCy - cellCenterY;
+
+      centerTarget.current = {
+        x: pos.current.x + dx,
+        y: pos.current.y + dy,
+      };
+
+      // Kill current velocity so we glide cleanly
+      velocity.current = { x: 0, y: 0 };
+      targetVelocity.current = { x: 0, y: 0 };
+    }
   }, []);
 
   const handleLeave = useCallback(() => {
     isHoveredRef.current = false;
+    centerTarget.current = null;
     setHoveredIdx(null);
   }, []);
 
@@ -221,6 +256,8 @@ export function InteractiveGallery() {
 
     // ── Desktop: mouse-position-based pan ──────────────────────────────────
     const handleMouseMove = (e: MouseEvent) => {
+      // Only drive mouse-pan when not hovering a cell
+      if (isHoveredRef.current) return;
       const hw = window.innerWidth / 2;
       const hh = window.innerHeight / 2;
       let nx = (e.clientX - hw) / hw;
@@ -239,22 +276,20 @@ export function InteractiveGallery() {
     const onTouchStart = (e: TouchEvent) => {
       const t = e.touches[0];
       touchRef.current = { lastX: t.clientX, lastY: t.clientY, vx: 0, vy: 0, isDragging: true };
-      // Kill any existing momentum so drag feels instant
       velocity.current = { x: 0, y: 0 };
+      centerTarget.current = null;
     };
 
     const onTouchMove = (e: TouchEvent) => {
       if (!touchRef.current?.isDragging) return;
-      e.preventDefault(); // stop page scroll while dragging the gallery
+      e.preventDefault();
       const t = e.touches[0];
       const dx = t.clientX - touchRef.current.lastX;
       const dy = t.clientY - touchRef.current.lastY;
 
-      // Apply delta directly to position for an immediate, 1:1 feel
       pos.current.x += dx;
       pos.current.y += dy;
 
-      // Rolling average velocity (for momentum on release)
       touchRef.current.vx = touchRef.current.vx * 0.6 + dx * 0.4;
       touchRef.current.vy = touchRef.current.vy * 0.6 + dy * 0.4;
 
@@ -264,14 +299,12 @@ export function InteractiveGallery() {
 
     const onTouchEnd = () => {
       if (!touchRef.current) return;
-      // Hand off the rolling velocity to the RAF loop for momentum coast
       velocity.current.x = touchRef.current.vx;
       velocity.current.y = touchRef.current.vy;
       touchRef.current.isDragging = false;
       touchRef.current = null;
     };
 
-    // passive: false so we can call preventDefault inside onTouchMove
     const container = containerRef.current;
     container?.addEventListener("touchstart", onTouchStart, { passive: true });
     container?.addEventListener("touchmove", onTouchMove, { passive: false });
@@ -284,28 +317,41 @@ export function InteractiveGallery() {
       const isMobile = window.innerWidth < 768;
 
       if (!touchRef.current?.isDragging) {
-        // Not actively dragging — apply target velocity (desktop) or coast (mobile)
-        const targetVx = isMobile ? 0 : (isHoveredRef.current ? 0 : targetVelocity.current.x);
-        const targetVy = isMobile ? 0 : (isHoveredRef.current ? 0 : targetVelocity.current.y);
-
-        if (document.body.classList.contains("nav-open")) {
-          velocity.current.x *= 0.85;
-          velocity.current.y *= 0.85;
-        } else {
-          // On mobile, decay velocity freely (momentum coast). On desktop, lerp to target.
-          if (isMobile) {
-            velocity.current.x *= 0.92; // friction / deceleration
-            velocity.current.y *= 0.92;
-          } else {
-            velocity.current.x += (targetVx - velocity.current.x) * 0.08;
-            velocity.current.y += (targetVy - velocity.current.y) * 0.08;
+        if (centerTarget.current) {
+          // Smoothly lerp toward the centering target
+          const lerpSpeed = 0.1;
+          pos.current.x += (centerTarget.current.x - pos.current.x) * lerpSpeed;
+          pos.current.y += (centerTarget.current.y - pos.current.y) * lerpSpeed;
+          // Snap and clear when close enough
+          const distX = Math.abs(centerTarget.current.x - pos.current.x);
+          const distY = Math.abs(centerTarget.current.y - pos.current.y);
+          if (distX < 0.5 && distY < 0.5) {
+            pos.current.x = centerTarget.current.x;
+            pos.current.y = centerTarget.current.y;
+            // Keep centerTarget set so we don't resume drift while hovering
           }
-        }
+        } else {
+          // Normal pan behaviour
+          const targetVx = isMobile ? 0 : targetVelocity.current.x;
+          const targetVy = isMobile ? 0 : targetVelocity.current.y;
 
-        pos.current.x += velocity.current.x;
-        pos.current.y += velocity.current.y;
+          if (document.body.classList.contains("nav-open")) {
+            velocity.current.x *= 0.85;
+            velocity.current.y *= 0.85;
+          } else {
+            if (isMobile) {
+              velocity.current.x *= 0.92;
+              velocity.current.y *= 0.92;
+            } else {
+              velocity.current.x += (targetVx - velocity.current.x) * 0.08;
+              velocity.current.y += (targetVy - velocity.current.y) * 0.08;
+            }
+          }
+
+          pos.current.x += velocity.current.x;
+          pos.current.y += velocity.current.y;
+        }
       }
-      // While isDragging, pos is updated directly in onTouchMove — skip here
 
       // Soft-clamp to bounds
       const { minX, maxX, minY, maxY } = bounds.current;

@@ -1,39 +1,6 @@
 import React, { useState } from "react";
 import { Award, ShieldCheck, HeartHandshake, Zap, Users } from "lucide-react";
 
-// Leafy branch SVG component
-export const LeafyBranchSVG = () => (
-  <svg 
-    className="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" 
-    viewBox="0 0 1200 800" 
-    preserveAspectRatio="xMidYMid slice" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="leaf-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#0A7C3F" />
-        <stop offset="100%" stopColor="#E87732" />
-      </linearGradient>
-      <filter id="shadow-blur" x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="12" />
-      </filter>
-    </defs>
-
-    {/* Abstract leaf shadows using SVG paths */}
-    <g filter="url(#shadow-blur)" fill="url(#leaf-gradient)">
-       {/* Top left branch */}
-       <path d="M -50,-50 C 150,100 250,50 350,150 C 450,250 300,300 200,400 C 100,500 -50,300 -50,-50 Z" />
-       {/* Top right leaves */}
-       <path d="M 1250,-100 C 1100,100 1000,50 900,200 C 800,350 950,400 1000,550 C 1100,700 1300,500 1250,-100 Z" />
-       {/* Bottom right branch */}
-       <path d="M 1300,900 C 1100,750 1000,800 850,700 C 700,600 800,500 950,400 C 1100,300 1300,500 1300,900 Z" />
-       {/* Bottom left scattered leaves */}
-       <path d="M -100,900 C 100,700 200,850 350,750 C 500,650 400,500 250,450 C 100,400 -50,600 -100,900 Z" />
-       <path d="M 500,0 C 600,100 700,-50 800,50 C 900,150 850,250 750,200 C 650,150 550,200 500,0 Z" />
-    </g>
-  </svg>
-);
-
 const VALUES = [
   {
     id: "01",
@@ -165,10 +132,12 @@ function CoreValueCard({ val }: { val: typeof VALUES[0] }) {
 
 export function CoreValuesSection() {
   return (
-    <section className="relative flex flex-col items-center justify-center pt-32 pb-16">
-      
+    <section
+      className="relative flex flex-col items-center justify-center pt-32 pb-16 bg-white"
+      style={{ background: "#ffffff" }}
+    >
       <div className="relative z-10 w-full max-w-4xl px-6">
-        <h2 className="text-center font-display text-lg tracking-[0.2em] uppercase font-semibold text-muted-foreground mb-24">
+        <h2 className="text-center font-display text-lg tracking-[0.2em] uppercase font-semibold text-black mb-24">
           Our Core Values
         </h2>
 

@@ -6,25 +6,25 @@ import { services } from "@/lib/site-data";
 
 const SERVICE_IMAGES: Record<string, string> = {
   "Glass Cutting":
-    "https://images.pexels.com/photos/7219180/pexels-photo-7219180.jpeg",
+    "https://images.pexels.com/photos/7219180/pexels-photo-7219180.jpeg?w=800&auto=compress",
   "Glass Drilling":
-    "https://images.pexels.com/photos/5691515/pexels-photo-5691515.jpeg",
+    "https://images.pexels.com/photos/5691515/pexels-photo-5691515.jpeg?w=800&auto=compress",
   Tempering:
-    "https://images.pexels.com/photos/11499130/pexels-photo-11499130.jpeg",
+    "https://images.pexels.com/photos/11499130/pexels-photo-11499130.jpeg?w=800&auto=compress",
   Lamination:
-    "https://images.pexels.com/photos/34048368/pexels-photo-34048368.jpeg",
+    "https://images.pexels.com/photos/34048368/pexels-photo-34048368.jpeg?w=800&auto=compress",
   "Sandblasting & Frosting":
-    "https://images.pexels.com/photos/28628031/pexels-photo-28628031.jpeg",
+    "https://images.pexels.com/photos/28628031/pexels-photo-28628031.jpeg?w=800&auto=compress",
   "Digital Printing on Glass":
-    "https://images.pexels.com/photos/18549730/pexels-photo-18549730.jpeg",
+    "https://images.pexels.com/photos/18549730/pexels-photo-18549730.jpeg?w=800&auto=compress",
   "Bullet-Resistant Processing":
-    "https://images.pexels.com/photos/21263452/pexels-photo-21263452.jpeg",
+    "https://images.pexels.com/photos/21263452/pexels-photo-21263452.jpeg?w=800&auto=compress",
   "Glass Installation":
-    "https://images.pexels.com/photos/5691544/pexels-photo-5691544.jpeg",
+    "https://images.pexels.com/photos/5691544/pexels-photo-5691544.jpeg?w=800&auto=compress",
   "Hardware & Accessories Supply":
-    "https://images.pexels.com/photos/3926794/pexels-photo-3926794.jpeg",
+    "https://images.pexels.com/photos/3926794/pexels-photo-3926794.jpeg?w=800&auto=compress",
   "Custom Glass Fabrication":
-    "https://images.pexels.com/photos/7519284/pexels-photo-7519284.jpeg",
+    "https://images.pexels.com/photos/7519284/pexels-photo-7519284.jpeg?w=800&auto=compress",
 };
 
 const SERVICE_DESCRIPTIONS: Record<string, string> = {
@@ -51,7 +51,7 @@ const SERVICE_DESCRIPTIONS: Record<string, string> = {
 };
 
 const FALLBACK =
-  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80&fit=crop";
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80&fit=crop";
 
 export function ServicesSection() {
   const cursorRef = useRef<HTMLDivElement>(null);

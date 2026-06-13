@@ -80,12 +80,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ScrollToTop />
       <LoadingScreen />
-      <div className={isFullscreenRoute ? "h-[100dvh] flex flex-col overflow-hidden" : "flex min-h-screen flex-col"}>
+      <div className="flex min-h-screen flex-col">
         <SiteHeader />
-        <main className={isFullscreenRoute ? "flex-1 overflow-y-auto overflow-x-hidden md:overflow-hidden" : "flex-1"}>
+        <main className="flex-1">
           <Outlet />
         </main>
-        {!isFullscreenRoute && <SiteFooter />}
+        <SiteFooter />
       </div>
     </QueryClientProvider>
   );

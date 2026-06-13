@@ -1,450 +1,414 @@
-import { useRef, useEffect, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { useState, useEffect, useRef } from "react";
 
 const MILESTONES = [
   {
     year: "2001",
-    index: "01",
     tag: "Origins",
-    heading: "Where It\nBegan",
+    heading: "Where It Began",
     body: "Born from a passion for precision, Sorana's founding team built deep technical expertise in automotive glass — servicing Addis Ababa's growing vehicle fleet and earning a reputation for unmatched accuracy.",
     stat: null as string | null,
-    accentEven: true,
+    accent: "#0A7C3F",
+    tagBg: "rgba(10,124,63,0.08)",
   },
   {
     year: "2008",
-    index: "02",
     tag: "Expansion",
-    heading: "Into\nArchitecture",
+    heading: "Into Architecture",
     body: "As Ethiopia's construction sector surged, Sorana pivoted its craft toward buildings — supplying tempered and laminated glass to hotels, hospitals, and high-rises reshaping Addis Ababa's skyline.",
     stat: null as string | null,
-    accentEven: false,
-  },
-  {
-    year: "2017",
-    index: "03",
-    tag: "Founding",
-    heading: "Formally\nEstablished",
-    body: "Sorana Glass is registered under its current legal structure, consolidating decades of operational history and positioning the business for full-scale industrial growth.",
-    stat: null as string | null,
-    accentEven: true,
+    accent: "#C5601A",
+    tagBg: "rgba(197,96,26,0.09)",
   },
   {
     year: "2022",
-    index: "04",
     tag: "Technology",
-    heading: "North Glass\nUpgrade",
-    body: "A landmark investment: four advanced tempering furnaces including a new North Glass unit — pushing daily production capacity to 2,000 m² and cutting lead times in half.",
+    heading: "North Glass Addition",
+    body: "Building on our 25-year history of tempering operations, we made a landmark addition: a new advanced North Glass tempering furnace — pushing daily capacity to 2,000 m² across our 4 furnaces.",
     stat: "2,000 m²/day",
-    accentEven: false,
+    accent: "#0A7C3F",
+    tagBg: "rgba(10,124,63,0.08)",
   },
   {
     year: "2024",
-    index: "05",
     tag: "Vision",
-    heading: "Ethiopia's\nMost Advanced",
+    heading: "Ethiopia's Most Advanced",
     body: "Over 200 completed projects. 80+ specialists. Four tempering lines. Sorana stands as Ethiopia's most fully integrated glass processor — and sets its sights on becoming a continental leader.",
     stat: "200+ Projects",
-    accentEven: true,
+    accent: "#C5601A",
+    tagBg: "rgba(197,96,26,0.09)",
   },
 ];
 
-// ─── Mobile: vertical stacked timeline ───────────────────────────────────────
-function MobileTimeline() {
+const DURATION = 5000;
+
+export function MilestonesSection() {
+  const [active, setActive] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  
+  // Stores when the CURRENT slide started playing
+  const startTimeRef = useRef<number>(Date.now());
+  // Stores how much time elapsed before we paused (so pause/resume doesn't jump)
+  const elapsedBeforePauseRef = useRef<number>(0);
+  const rafRef = useRef<number | null>(null);
+
+  // Manual jump — resets the timeline markers safely
+  const goTo = (index: number) => {
+    setActive(index);
+    setAnimKey((k) => k + 1);
+    setProgress(0);
+    startTimeRef.current = Date.now();
+    elapsedBeforePauseRef.current = 0;
+  };
+
+  useEffect(() => {
+    if (paused) {
+      // Record exactly how far along we were when the user hovered over the container
+      elapsedBeforePauseRef.current += Date.now() - startTimeRef.current;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      return;
+    }
+
+    // Adjust start time to account for previous elapsed runtime before pause
+    startTimeRef.current = Date.now() - elapsedBeforePauseRef.current;
+
+    const tick = () => {
+      const totalElapsed = Date.now() - startTimeRef.current;
+      
+      if (totalElapsed >= DURATION) {
+        // Slide duration met: Reset clock parameters and move to the next slide safely
+        startTimeRef.current = Date.now();
+        elapsedBeforePauseRef.current = 0;
+        setProgress(0);
+        setActive((prev) => {
+          const nextIndex = (prev + 1) % MILESTONES.length;
+          setAnimKey((k) => k + 1);
+          return nextIndex;
+        });
+      } else {
+        // Keep counting up progress bar safely 
+        setProgress(totalElapsed / DURATION);
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [paused, active]); // Sync loop dynamically with active updates and pause states
+
+  const m = MILESTONES[active];
+
   return (
     <>
       <style>{`
-        .mob-section {
-          background: #f7f7f5;
-          padding: 3rem 1.5rem 4rem;
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+        .ms-section {
+          font-family: system-ui, -apple-system, sans-serif;
+          padding: 4rem 0 5rem;
+          width: 100%;
+          box-sizing: border-box;
         }
-        .mob-header {
-          margin-bottom: 3rem;
+        .ms-inner {
+          width: 100%;
+          padding: 0 clamp(1.5rem, 5vw, 4rem);
+          box-sizing: border-box;
+          position: relative;
         }
-        .mob-eyebrow {
-          color: #0A7C3F;
+        .ms-header { margin-bottom: 3.5rem; }
+        .ms-eyebrow {
           font-size: 10px;
-          letter-spacing: 0.32em;
+          letter-spacing: 0.3em;
           text-transform: uppercase;
-          font-family: system-ui, sans-serif;
-          margin-bottom: 8px;
+          color: rgba(0,0,0,0.35);
+          margin-bottom: 10px;
         }
-        .mob-title {
+        .ms-title {
           font-family: 'DM Serif Display', Georgia, serif;
-          font-size: clamp(1.6rem, 7vw, 2.2rem);
+          font-size: clamp(1.6rem, 3vw, 2.4rem);
           font-weight: 400;
           letter-spacing: -0.02em;
           line-height: 1.05;
           color: #111;
+          margin: 0;
         }
-        .mob-timeline {
-          position: relative;
-          padding-left: 32px;
-        }
-        /* Continuous vertical line */
-        .mob-timeline::before {
-          content: '';
-          position: absolute;
-          left: 7px;
-          top: 12px;
-          bottom: 12px;
-          width: 1px;
-          background: rgba(0,0,0,0.1);
-        }
-        .mob-item {
+        .ms-track {
+          display: flex;
           position: relative;
           margin-bottom: 3rem;
         }
-        .mob-item:last-child {
-          margin-bottom: 0;
-        }
-        /* Dot on the line */
-        .mob-dot {
+        .ms-track::before {
+          content: '';
           position: absolute;
-          left: -28px;
-          top: 5px;
-          width: 10px;
-          height: 10px;
+          top: 18px;
+          left: 18px;
+          right: 18px;
+          height: 1px;
+          background: rgba(0,0,0,0.1);
+          z-index: 0;
+        }
+        .ms-stop {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          position: relative;
+          z-index: 1;
+        }
+        .ms-stop-dot {
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
-          border: 1.5px solid;
+          border: 1.5px solid rgba(0,0,0,0.12);
           background: #f7f7f5;
-          flex-shrink: 0;
-        }
-        .mob-year {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.35s ease, border-color 0.35s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1), color 0.35s ease;
           font-family: 'DM Serif Display', Georgia, serif;
-          font-size: clamp(2.4rem, 12vw, 4rem);
+          font-size: 0.75rem;
+          color: rgba(0,0,0,0.3);
+        }
+        .ms-stop-dot.active {
+          border-color: transparent;
+          color: #fff;
+          transform: scale(1.15);
+        }
+        .ms-stop-year {
+          font-size: 11px;
+          letter-spacing: 0.08em;
+          color: rgba(0,0,0,0.35);
+          transition: color 0.3s, font-weight 0.3s;
+        }
+        .ms-stop.active .ms-stop-year { color: #111; font-weight: 600; }
+        .ms-card-wrap {
+          position: relative;
+          min-height: 260px;
+          overflow: hidden;
+        }
+        .ms-card {
+          display: grid;
+          grid-template-columns: 1fr 1px 1fr;
+          gap: 0 clamp(2rem, 5vw, 4rem);
+          align-items: center;
+          min-height: 260px;
+          width: 100%;
+        }
+        .ms-card-enter {
+          animation: ms-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes ms-enter {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .ms-card-enter .ms-big-year  { animation: ms-enter 0.5s 0.04s cubic-bezier(0.22,1,0.36,1) both; }
+        .ms-card-enter .ms-tag       { animation: ms-enter 0.5s 0.10s cubic-bezier(0.22,1,0.36,1) both; }
+        .ms-card-enter .ms-heading   { animation: ms-enter 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both; }
+        .ms-card-enter .ms-body      { animation: ms-enter 0.5s 0.14s cubic-bezier(0.22,1,0.36,1) both; }
+        .ms-card-enter .ms-stat      { animation: ms-enter 0.5s 0.20s cubic-bezier(0.22,1,0.36,1) both; }
+        .ms-card-enter .ms-divider   { animation: ms-divider-grow 0.6s 0.06s cubic-bezier(0.22,1,0.36,1) both; }
+        @keyframes ms-divider-grow {
+          from { transform: scaleY(0); opacity: 0; }
+          to   { transform: scaleY(1); opacity: 1; }
+        }
+        .ms-left { display: flex; flex-direction: column; gap: 14px; }
+        .ms-big-year {
+          font-family: 'DM Serif Display', Georgia, serif;
+          font-size: clamp(5rem, 11vw, 9rem);
           line-height: 0.88;
           letter-spacing: -0.04em;
           color: #111;
-          margin-bottom: 10px;
-        }
-        .mob-tag {
-          display: inline-block;
-          padding: 3px 12px;
-          border-radius: 99px;
-          font-size: 9px;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          font-family: system-ui, sans-serif;
-          margin-bottom: 14px;
-        }
-        .mob-heading {
-          font-family: 'DM Serif Display', Georgia, serif;
-          font-size: clamp(1.4rem, 6vw, 1.9rem);
-          font-weight: 400;
-          letter-spacing: -0.025em;
-          line-height: 1.1;
-          color: #111;
-          margin-bottom: 10px;
-          white-space: pre-line;
-        }
-        .mob-body {
-          font-family: system-ui, -apple-system, sans-serif;
-          font-size: 0.875rem;
-          color: #666662;
-          line-height: 1.72;
-        }
-        .mob-stat {
-          font-family: 'DM Serif Display', Georgia, serif;
-          font-size: clamp(1.3rem, 5vw, 1.7rem);
-          letter-spacing: -0.02em;
-          margin-top: 16px;
-          display: inline-block;
-          padding-bottom: 6px;
-          border-bottom: 2px solid;
-        }
-        .mob-counter {
-          font-family: system-ui, sans-serif;
-          font-size: 10px;
-          letter-spacing: 0.15em;
-          color: rgba(0,0,0,0.22);
-          margin-bottom: 14px;
-        }
-      `}</style>
-      <div className="mob-section">
-        <div className="mob-header">
-          <p className="mob-eyebrow">Our History</p>
-          <h2 className="mob-title">Two Decades of Glass</h2>
-        </div>
-
-        <div className="mob-timeline">
-          {MILESTONES.map((m, i) => {
-            const accent   = m.accentEven ? "#0A7C3F" : "#C5601A";
-            const accentBg = m.accentEven ? "rgba(10,124,63,0.08)" : "rgba(197,96,26,0.09)";
-
-            return (
-              <div key={i} className="mob-item">
-                {/* Dot */}
-                <span
-                  className="mob-dot"
-                  style={{ borderColor: accent, background: i === 0 ? accent : "#f7f7f5" }}
-                />
-
-                {/* Counter */}
-                <p className="mob-counter">
-                  {m.index} / {MILESTONES.length.toString().padStart(2, "0")}
-                </p>
-
-                {/* Year */}
-                <div className="mob-year">{m.year}</div>
-
-                {/* Tag */}
-                <span
-                  className="mob-tag"
-                  style={{ background: accentBg, color: accent }}
-                >
-                  {m.tag}
-                </span>
-
-                {/* Heading */}
-                <h3 className="mob-heading">{m.heading}</h3>
-
-                {/* Body */}
-                <p className="mob-body">{m.body}</p>
-
-                {/* Stat */}
-                {m.stat && (
-                  <span
-                    className="mob-stat"
-                    style={{ color: accent, borderColor: accent }}
-                  >
-                    {m.stat}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </>
-  );
-}
-
-// ─── Desktop: original pinned scroll ─────────────────────────────────────────
-function DesktopTimeline() {
-  const sectionRef  = useRef<HTMLDivElement>(null);
-  const stickyRef   = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current || !stickyRef.current) return;
-
-    const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray<HTMLElement>(".ms-card");
-      const dots  = gsap.utils.toArray<HTMLElement>(".ms-dot");
-      const total = MILESTONES.length;
-
-      gsap.set(cards, { autoAlpha: 0, y: 48 });
-      gsap.set(cards[0], { autoAlpha: 1, y: 0 });
-      dots[0]?.classList.add("ms-active");
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: () => `+=${window.innerHeight * (total - 1) * 1.2}`,
-          scrub: 0.9,
-          pin: stickyRef.current,
-          pinSpacing: true,
-          onUpdate(self) {
-            if (progressRef.current)
-              progressRef.current.style.transform = `scaleX(${self.progress})`;
-          },
-        },
-      });
-
-      for (let i = 1; i < total; i++) {
-        const seg = i - 1;
-        tl
-          .to(cards[seg], { autoAlpha: 0, y: -40, duration: 0.28, ease: "power2.in" }, seg)
-          .to(cards[i],   { autoAlpha: 1, y: 0,   duration: 0.3,  ease: "power2.out" }, seg + 0.22)
-          .call(
-            () => dots.forEach((d, di) => d.classList.toggle("ms-active", di === i)),
-            undefined,
-            seg + 0.28
-          );
-      }
-
-      tl.to({}, { duration: 0.5 });
-      ScrollTrigger.refresh();
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <>
-      <style>{`
-        .ms-active {
-          background-color: #0A7C3F !important;
-          transform: scale(1.7);
-        }
-        .ms-year-num {
-          font-size: clamp(7rem, 11vw, 16rem);
-          line-height: 0.88;
-          letter-spacing: -0.04em;
-          color: #111;
-          user-select: none;
-          display: block;
         }
         .ms-tag {
           display: inline-block;
           padding: 4px 14px;
           border-radius: 99px;
-          font-size: 10px;
+          font-size: 9px;
           letter-spacing: 0.24em;
           text-transform: uppercase;
-          font-family: system-ui, sans-serif;
-          margin-top: 18px;
+          align-self: flex-start;
         }
-        .ms-rule {
+        .ms-divider {
           width: 1px;
           align-self: stretch;
-          margin: 0 52px;
-          flex-shrink: 0;
+          transform-origin: top center;
         }
+        .ms-right { display: flex; flex-direction: column; gap: 12px; }
         .ms-heading {
           font-family: 'DM Serif Display', Georgia, serif;
-          font-size: clamp(2rem, 4.5vw, 3.8rem);
+          font-size: clamp(1.6rem, 2.5vw, 2.4rem);
           font-weight: 400;
           letter-spacing: -0.025em;
-          line-height: 1.06;
+          line-height: 1.1;
           color: #111;
-          margin-bottom: 20px;
-          white-space: pre-line;
+          margin: 0;
         }
         .ms-body {
-          font-family: system-ui, -apple-system, sans-serif;
-          font-size: clamp(0.875rem, 1.3vw, 1rem);
-          color: #555551;
-          line-height: 1.75;
-          max-width: 44ch;
+          font-size: clamp(0.85rem, 1.1vw, 0.95rem);
+          color: #666662;
+          line-height: 1.78;
+          max-width: 52ch;
+          margin: 0;
         }
         .ms-stat {
           font-family: 'DM Serif Display', Georgia, serif;
-          font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+          font-size: clamp(1.2rem, 2vw, 1.7rem);
           letter-spacing: -0.02em;
+          padding-bottom: 6px;
+          border-bottom: 2px solid;
+          display: inline-block;
+          margin-top: 8px;
+        }
+        .ms-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 2.5rem;
+        }
+        .ms-nav {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .ms-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 1px solid rgba(0,0,0,0.15);
+          background: transparent;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s, color 0.2s, border-color 0.2s;
+          color: #111;
+        }
+        .ms-btn:hover:not(:disabled) {
+          background: #0A7C3F;
+          color: #fff;
+          border-color: #0A7C3F;
+        }
+        .ms-btn:disabled { opacity: 0.25; cursor: default; }
+        .ms-counter {
+          font-size: 11px;
+          letter-spacing: 0.15em;
+          color: rgba(0,0,0,0.25);
+        }
+        .ms-progress-track {
+          width: 120px;
+          height: 2px;
+          background: rgba(0,0,0,0.08);
+          border-radius: 99px;
+          overflow: hidden;
+        }
+        .ms-progress-fill {
+          height: 100%;
+          border-radius: 99px;
+        }
+        @media (max-width: 640px) {
+          .ms-card { grid-template-columns: 1fr; gap: 1.5rem 0; }
+          .ms-divider { display: none; }
+          .ms-big-year { font-size: clamp(4rem, 18vw, 6rem); }
+          .ms-progress-track { width: 80px; }
         }
       `}</style>
 
-      <div ref={sectionRef} className="relative bg-white">
-        <div
-          ref={stickyRef}
-          className="h-screen w-full overflow-hidden relative"
-          style={{ background: "#f7f7f5" }}
-        >
-          {/* Progress bar */}
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "rgba(0,0,0,0.07)", zIndex: 20 }}>
-            <div
-              ref={progressRef}
-              style={{ height: "100%", background: "#0A7C3F", transformOrigin: "left", transform: "scaleX(0)" }}
-            />
+      <div
+        className="ms-section"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        <div className="ms-inner">
+
+          <div className="ms-header">
+            <p className="ms-eyebrow">Our History</p>
+            <h2 className="ms-title">Two Decades of Glass</h2>
           </div>
 
-          <div className="relative z-10 h-full flex flex-col">
-            {/* Header */}
-            <div
-              style={{
-                padding: "clamp(2rem,4vw,3rem) clamp(2rem,6vw,6rem) 1.5rem",
-                borderBottom: "1px solid rgba(0,0,0,0.07)",
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "space-between",
-              }}
-            >
-              <div>
-                <p style={{ color: "#0A7C3F", fontSize: 10, letterSpacing: "0.32em", textTransform: "uppercase", fontFamily: "system-ui,sans-serif", marginBottom: 8 }}>
-                  Our History
-                </p>
-                <h2 style={{ fontFamily: "'DM Serif Display',Georgia,serif", fontSize: "clamp(1.7rem,3.2vw,2.6rem)", fontWeight: 400, letterSpacing: "-0.02em", lineHeight: 1, color: "#111" }}>
-                  Two Decades of Glass
-                </h2>
+          <div className="ms-track">
+            {MILESTONES.map((stop, i) => (
+              <div
+                key={i}
+                className={`ms-stop${i === active ? " active" : ""}`}
+                onClick={() => goTo(i)}
+                role="button"
+                aria-label={`Go to ${stop.year}`}
+              >
+                <div
+                  className={`ms-stop-dot${i === active ? " active" : ""}`}
+                  style={i === active ? { background: stop.accent, borderColor: stop.accent } : {}}
+                >
+                  {i !== active && <span>{stop.year.slice(2)}</span>}
+                </div>
+                <span className="ms-stop-year">{stop.year}</span>
               </div>
+            ))}
+          </div>
 
-              {/* Dots */}
-              <div style={{ display: "flex", gap: 10, paddingBottom: 4 }}>
-                {MILESTONES.map((_, i) => (
-                  <span
-                    key={i}
-                    className="ms-dot"
-                    style={{ display: "block", width: 6, height: 6, borderRadius: "50%", background: "rgba(0,0,0,0.13)", transition: "all 0.5s" }}
-                  />
-                ))}
+          <div className="ms-card-wrap">
+            <div className="ms-card ms-card-enter" key={animKey}>
+              <div className="ms-left">
+                <div className="ms-big-year">{m.year}</div>
+                <span className="ms-tag" style={{ background: m.tagBg, color: m.accent }}>
+                  {m.tag}
+                </span>
               </div>
-            </div>
-
-            {/* Cards */}
-            <div style={{ flex: 1, position: "relative" }}>
-              {MILESTONES.map((m, i) => {
-                const accent   = m.accentEven ? "#0A7C3F" : "#C5601A";
-                const accentBg = m.accentEven ? "rgba(10,124,63,0.08)" : "rgba(197,96,26,0.09)";
-
-                return (
-                  <div
-                    key={i}
-                    className="ms-card"
-                    style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center" }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        width: "100%",
-                        padding: "0 clamp(2rem,6vw,6rem)",
-                      }}
-                    >
-                      {/* Left: Big year + tag */}
-                      <div style={{ width: "clamp(200px,30%,380px)", flexShrink: 0 }}>
-                        <span className="ms-year-num">{m.year}</span>
-                        <span className="ms-tag" style={{ background: accentBg, color: accent }}>
-                          {m.tag}
-                        </span>
-                      </div>
-
-                      {/* Vertical rule */}
-                      <div className="ms-rule" style={{ background: `${accent}22` }} />
-
-                      {/* Right: text block */}
-                      <div style={{ maxWidth: 520 }}>
-                        <p style={{ fontFamily: "system-ui,sans-serif", fontSize: 11, letterSpacing: "0.15em", color: "rgba(0,0,0,0.22)", marginBottom: 18 }}>
-                          {m.index} / {MILESTONES.length.toString().padStart(2, "0")}
-                        </p>
-                        <h3 className="ms-heading">{m.heading}</h3>
-                        <p className="ms-body">{m.body}</p>
-                        {m.stat && (
-                          <div style={{ display: "inline-block", marginTop: 28, paddingBottom: 10, borderBottom: `2px solid ${accent}` }}>
-                            <span className="ms-stat" style={{ color: accent }}>{m.stat}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              <div className="ms-divider" style={{ background: `${m.accent}22` }} />
+              <div className="ms-right">
+                <h3 className="ms-heading">{m.heading}</h3>
+                <p className="ms-body">{m.body}</p>
+                {m.stat && (
+                  <span className="ms-stat" style={{ color: m.accent, borderColor: m.accent }}>
+                    {m.stat}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
+
+          <div className="ms-footer">
+            <div className="ms-nav">
+              <button
+                className="ms-btn"
+                onClick={() => goTo(Math.max(0, active - 1))}
+                disabled={active === 0}
+                aria-label="Previous"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <button
+                className="ms-btn"
+                onClick={() => goTo(Math.min(MILESTONES.length - 1, active + 1))}
+                disabled={active === MILESTONES.length - 1}
+                aria-label="Next"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <span className="ms-counter">
+                {String(active + 1).padStart(2, "0")} / {String(MILESTONES.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            <div className="ms-progress-track">
+              <div
+                className="ms-progress-fill"
+                style={{ width: `${progress * 100}%`, background: m.accent }}
+              />
+            </div>
+          </div>
+
         </div>
       </div>
     </>
   );
-}
-
-// ─── Root: pick layout based on viewport ─────────────────────────────────────
-export function MilestonesSection() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    setIsMobile(mq.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  return isMobile ? <MobileTimeline /> : <DesktopTimeline />;
 }

@@ -5,7 +5,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { StorySection } from "@/components/StorySection";
-import { CoreValuesSection, LeafyBranchSVG } from "@/components/CoreValuesSection";
+import { MissionVisionSection } from "@/components/MissionVisionSection";
+import { CoreValuesSection } from "@/components/CoreValuesSection";
 import { LeadershipSection } from "@/components/LeadershipSection";
 import { MilestonesSection } from "@/components/MilestonesSection";
 
@@ -81,29 +82,15 @@ function About() {
         description="Sorana Glass began with deep technical expertise in automotive glass and has grown into a fully integrated glass solutions provider — combining over 20 years of industry experience with modern production technology."
         titleAs="p"
       />
-
-      {/* ─── Milestones ─── */}
-      <MilestonesSection />
-
+    
       <StorySection />
 
-      <div ref={wrapperRef} id="about-footer-trigger" className="relative">
-        <div ref={contentRef} className="relative overflow-hidden bg-surface min-h-screen">
-          {/* Background Layer: Frosted Glass + Leafy SVGs */}
-          <div className="absolute inset-0 z-0 bg-[#EFEFEA]">
-            {/* Colorful gradient blobs */}
-            <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[#0A7C3F]/30 rounded-full blur-[100px] -translate-y-1/3 -translate-x-1/2" />
-            <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] max-w-[800px] max-h-[800px] bg-[#E87732]/20 rounded-full blur-[100px] translate-y-1/3 translate-x-1/2" />
-            {/* Leafy SVGs */}
-            <LeafyBranchSVG />
-            {/* Heavy Frosted Glass Overlay */}
-            <div className="absolute inset-0 bg-white/40 backdrop-blur-[60px]" />
-          </div>
+      <MilestonesSection />
 
-          <CoreValuesSection />
-          <LeadershipSection />
-        </div>
-      </div>
+      <MissionVisionSection/>
+
+      <CoreValuesSection />
+      <LeadershipSection />
     </>
   );
 }

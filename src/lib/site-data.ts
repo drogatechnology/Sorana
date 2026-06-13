@@ -38,7 +38,7 @@ export const industries = [
 
 export const stats = [
   { label: "Years of experience", value: "20+" },
-  { label: "Tempering furnaces", value: "4" },
+  { label: "Projects Completed", value: "200+" },
   { label: "Daily capacity", value: "2,000 m²" },
-  { label: "Established", value: "2017" },
+  { label: "Tempering furnaces", value: "4" },
 ] as const;

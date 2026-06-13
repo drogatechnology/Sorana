@@ -159,7 +159,7 @@ export function LeadershipSection() {
   return (
     <>
       <style>{styles}</style>
-      <section className="relative flex flex-col items-center justify-center pt-16 pb-32">
+      <section className="relative flex flex-col items-center justify-center pt-16 pb-32 bg-white">
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6">
           <div className="text-center mb-24">
             <h2 className="font-display text-sm tracking-[0.2em] uppercase font-semibold text-muted-foreground">

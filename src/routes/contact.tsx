@@ -61,10 +61,12 @@ function ExpandPanel({
   panelIndex,
   prevIndex,
   animating,
+  isInteractingMap,
 }: {
   panelIndex: number;
   prevIndex: number;
   animating: boolean;
+  isInteractingMap?: boolean;
 }) {
   const [progress, setProgress] = useState(animating ? 0 : 1);
   const rafRef = useRef<number>(0);
@@ -100,7 +102,7 @@ function ExpandPanel({
       {/* Previous panel stays fully visible underneath */}
       {oldVisible && (
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
-          <PanelContent panel={PANELS[prevIndex]} />
+          <PanelContent panel={PANELS[prevIndex]} isInteractingMap={false} />
         </div>
       )}
       {/* New panel expands from center of right side */}
@@ -112,13 +114,13 @@ function ExpandPanel({
           transform: "translateZ(0)",
         }}
       >
-        <PanelContent panel={PANELS[panelIndex]} />
+        <PanelContent panel={PANELS[panelIndex]} isInteractingMap={isInteractingMap} />
       </div>
     </div>
   );
 }
 
-function PanelContent({ panel }: { panel: (typeof PANELS)[number] }) {
+function PanelContent({ panel, isInteractingMap = false }: { panel: (typeof PANELS)[number], isInteractingMap?: boolean }) {
   if (panel.isMap) {
     return (
       <div className="absolute inset-0">
@@ -131,7 +133,7 @@ function PanelContent({ panel }: { panel: (typeof PANELS)[number] }) {
           title="Sorana Glass Location"
         />
         {/* Dark overlay so the text is readable */}
-        <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+        <div className={`absolute inset-0 pointer-events-none transition-colors duration-500 ${isInteractingMap ? 'bg-black/0' : 'bg-black/50'}`} />
       </div>
     );
   }
@@ -154,9 +156,33 @@ function Contact() {
   const [sent, setSent] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [introFinished, setIntroFinished] = useState(false);
+  const [isInteractingMap, setIsInteractingMap] = useState(false);
   const introRef = useRef(false);
 
+  useEffect(() => {
+    const handleBlur = () => {
+      setTimeout(() => {
+        if (document.activeElement?.tagName === "IFRAME") {
+          setIsInteractingMap(true);
+        }
+      }, 0);
+    };
+    window.addEventListener("blur", handleBlur);
+    return () => window.removeEventListener("blur", handleBlur);
+  }, []);
+
+  // When we exit map mode, remove focus from the iframe so the next click registers as a new blur event
+  useEffect(() => {
+    if (!isInteractingMap) {
+      if (document.activeElement?.tagName === "IFRAME") {
+        (document.activeElement as HTMLElement).blur();
+      }
+      window.focus();
+    }
+  }, [isInteractingMap]);
+
   const goTo = useCallback((next: number, instant = false) => {
+    setIsInteractingMap(false);
     setAnimating(false);
     requestAnimationFrame(() => {
       setPrevIndex((cur) => cur);
@@ -193,7 +219,7 @@ function Contact() {
   }, []);
 
   useEffect(() => {
-    if (!introFinished || isHovered) return;
+    if (!introFinished || isHovered || isInteractingMap) return;
     
     const t = setInterval(() => {
       if (window.innerWidth < 768) return; // Disable auto-rotation on mobile
@@ -211,6 +237,7 @@ function Contact() {
 
   const handleTabClick = (i: number) => {
     if (i === activeIndex) return;
+    setIsInteractingMap(false);
     setPrevIndex(activeIndex);
     setActiveIndex(i);
     setAnimating(true);
@@ -219,22 +246,35 @@ function Contact() {
   const active = PANELS[activeIndex];
 
   return (
-    <div className="min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-visible md:overflow-hidden bg-[#071a0e]">
+    <div 
+      className="min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-visible md:overflow-hidden bg-[#071a0e]"
+      onMouseLeave={() => setIsHovered(false)}
+    >
 
       {/* ── LEFT: Animated image panels (Bottom on mobile) ───────────────────────── */}
       <div
         className="relative w-full h-[60vh] md:h-full md:w-1/2 flex-shrink-0 overflow-hidden order-2 md:order-1"
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <ExpandPanel
           panelIndex={activeIndex}
           prevIndex={prevIndex}
           animating={animating}
+          isInteractingMap={isInteractingMap}
         />
 
+        {/* Exit map mode button */}
+        <div className={`absolute top-6 right-6 z-20 transition-opacity duration-500 ${active.isMap && isInteractingMap ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <button
+            onClick={() => setIsInteractingMap(false)}
+            className="bg-black/50 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-md hover:bg-black/70 transition-colors shadow-lg"
+          >
+            Exit Map
+          </button>
+        </div>
+
         {/* Center info overlay */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-8 pointer-events-none text-center">
+        <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center p-8 pointer-events-none text-center transition-all duration-500 ${active.isMap && isInteractingMap ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
           
           {/* Active panel info */}
           <div className="transition-all duration-500 mb-8">
@@ -249,7 +289,7 @@ function Contact() {
           </div>
           
           {/* Tab buttons */}
-          <div className="flex gap-4 pointer-events-auto">
+          <div className={`flex gap-4 ${active.isMap && isInteractingMap ? 'pointer-events-none' : 'pointer-events-auto'}`}>
             {PANELS.map((p, i) => (
               <button
                 key={p.id}
@@ -273,6 +313,11 @@ function Contact() {
       <div
         className="relative w-full min-h-[60vh] md:h-full md:w-1/2 flex-shrink-0 flex flex-col justify-center order-1 md:order-2 pt-28 pb-12 md:py-0"
         style={{ background: "linear-gradient(160deg, #0A7C3F 0%, #064E26 100%)" }}
+        onMouseEnter={() => {
+          setIsHovered(false);
+          setIsInteractingMap(false);
+        }}
+        onPointerDown={() => setIsInteractingMap(false)}
       >
         {/* Subtle grain */}
         <div

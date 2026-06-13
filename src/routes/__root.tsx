@@ -74,7 +74,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isFullscreenRoute = pathname === "/contact" || pathname === "/gallery";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -85,7 +84,7 @@ function RootComponent() {
         <main className="flex-1">
           <Outlet />
         </main>
-        <SiteFooter />
+        {pathname !== "/contact" && <SiteFooter />}
       </div>
     </QueryClientProvider>
   );

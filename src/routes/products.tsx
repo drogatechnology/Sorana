@@ -143,24 +143,29 @@ function Products() {
         {/* ── Product Grid ── */}
         <div className="flex-1 flex flex-col w-full">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 w-full">
-            {filteredCards.map((c, idx) => (
-              <article
-                key={`${c.name}-${idx}`}
-                className="flex flex-col bg-white border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer"
-              >
-                <div className="w-full aspect-[4/3] overflow-hidden relative bg-[#f4f7f9] flex items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-[#e8f1f5] opacity-50"></div>
-                  <img
-                    src={c.img}
-                    alt={c.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 relative z-10"
-                  />
-                </div>
-                <div className="py-4 px-3 md:py-6 md:px-4 text-center bg-white flex-1 flex items-center justify-center">
-                  <h3 className="font-sans font-bold text-gray-900 tracking-wide text-[13px] md:text-[15px]">{c.name}</h3>
-                </div>
-              </article>
-            ))}
+            {filteredCards.map((c, idx) => {
+              const slug = c.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+              return (
+                <Link
+                  to="/products/$productId"
+                  params={{ productId: slug }}
+                  key={`${c.name}-${idx}`}
+                  className="flex flex-col bg-white border border-gray-100 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="w-full aspect-[4/3] overflow-hidden relative bg-[#f4f7f9] flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-[#e8f1f5] opacity-50"></div>
+                    <img
+                      src={c.img}
+                      alt={c.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 relative z-10"
+                    />
+                  </div>
+                  <div className="py-4 px-3 md:py-6 md:px-4 text-center bg-white flex-1 flex items-center justify-center">
+                    <h3 className="font-sans font-bold text-gray-900 tracking-wide text-[13px] md:text-[15px]">{c.name}</h3>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 

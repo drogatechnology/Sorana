@@ -39,67 +39,54 @@ const MILESTONES = [
   },
 ];
 
-const DURATION = 5000;
-
 export function MilestonesSection() {
   const [active, setActive] = useState(0);
   const [animKey, setAnimKey] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   
-  // Stores when the CURRENT slide started playing
-  const startTimeRef = useRef<number>(Date.now());
-  // Stores how much time elapsed before we paused (so pause/resume doesn't jump)
-  const elapsedBeforePauseRef = useRef<number>(0);
-  const rafRef = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Manual jump — resets the timeline markers safely
   const goTo = (index: number) => {
-    setActive(index);
-    setAnimKey((k) => k + 1);
-    setProgress(0);
-    startTimeRef.current = Date.now();
-    elapsedBeforePauseRef.current = 0;
+    if (!sectionRef.current) return;
+    const rect = sectionRef.current.getBoundingClientRect();
+    const absoluteTop = window.scrollY + rect.top;
+    const scrollableDistance = rect.height - window.innerHeight;
+    
+    const targetProgress = (index + 0.5) / MILESTONES.length;
+    const targetY = absoluteTop + (targetProgress * scrollableDistance);
+    
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
   };
 
   useEffect(() => {
-    if (paused) {
-      // Record exactly how far along we were when the user hovered over the container
-      elapsedBeforePauseRef.current += Date.now() - startTimeRef.current;
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      return;
-    }
-
-    // Adjust start time to account for previous elapsed runtime before pause
-    startTimeRef.current = Date.now() - elapsedBeforePauseRef.current;
-
-    const tick = () => {
-      const totalElapsed = Date.now() - startTimeRef.current;
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const scrollableDistance = rect.height - window.innerHeight;
       
-      if (totalElapsed >= DURATION) {
-        // Slide duration met: Reset clock parameters and move to the next slide safely
-        startTimeRef.current = Date.now();
-        elapsedBeforePauseRef.current = 0;
-        setProgress(0);
-        setActive((prev) => {
-          const nextIndex = (prev + 1) % MILESTONES.length;
+      if (scrollableDistance <= 0) return;
+
+      let p = -rect.top / scrollableDistance;
+      p = Math.max(0, Math.min(1, p));
+      
+      setProgress(p);
+
+      const rawIndex = Math.floor(p * MILESTONES.length);
+      const newActive = Math.min(MILESTONES.length - 1, rawIndex);
+      
+      setActive((prev) => {
+        if (prev !== newActive) {
           setAnimKey((k) => k + 1);
-          return nextIndex;
-        });
-      } else {
-        // Keep counting up progress bar safely 
-        setProgress(totalElapsed / DURATION);
-      }
-
-      rafRef.current = requestAnimationFrame(tick);
+          return newActive;
+        }
+        return prev;
+      });
     };
 
-    rafRef.current = requestAnimationFrame(tick);
-    
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [paused, active]); // Sync loop dynamically with active updates and pause states
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const m = MILESTONES[active];
 
@@ -107,6 +94,19 @@ export function MilestonesSection() {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+        .ms-section-outer {
+          position: relative;
+          width: 100%;
+        }
+        .ms-section-sticky {
+          position: sticky;
+          top: 0;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+          width: 100%;
+        }
         .ms-section {
           font-family: system-ui, -apple-system, sans-serif;
           padding: 4rem 0 5rem;
@@ -320,11 +320,13 @@ export function MilestonesSection() {
       `}</style>
 
       <div
-        className="ms-section"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
+        className="ms-section-outer"
+        ref={sectionRef}
+        style={{ height: `${MILESTONES.length * 100}vh` }}
       >
-        <div className="ms-inner">
+        <div className="ms-section-sticky">
+          <div className="ms-section">
+            <div className="ms-inner">
 
           <div className="ms-header">
             <p className="ms-eyebrow">Our History</p>
@@ -407,6 +409,8 @@ export function MilestonesSection() {
             </div>
           </div>
 
+            </div>
+          </div>
         </div>
       </div>
     </>
